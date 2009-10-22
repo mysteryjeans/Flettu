@@ -25,7 +25,7 @@ using System;
 namespace CoreSystem.Collections
 {
     /// <summary>
-    /// This class is the replacement of WPF ObservableCollection class to support asyncrhonous updates for data binding senierous
+    /// This class is the replacement of WPF ObservableCollection class to support asyncrhonous updates for data binding scenarios
     /// </summary>
     /// <typeparam name="Titem">Type of object it will hold</typeparam>
     /// <remarks>
