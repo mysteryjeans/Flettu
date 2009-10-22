@@ -15,7 +15,7 @@
     <Name>Documentation</Name>
     <!-- SHFB properties -->
     <OutputPath>..\..\..\Documentation\Help\Chm\</OutputPath>
-    <HtmlHelpName>CoreSystem Class Library Help</HtmlHelpName>
+    <HtmlHelpName>CoreSystem Documented Class Library</HtmlHelpName>
     <PresentationStyle>Prototype</PresentationStyle>
     <HelpTitle>A CoreSystem Documented Class Library</HelpTitle>
     <MissingTags>None</MissingTags>
