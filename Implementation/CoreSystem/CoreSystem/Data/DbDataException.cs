@@ -3,9 +3,10 @@ using System;
 namespace CoreSystem.Data
 {
     /// <summary>
-    /// Use LogException for drive classes of LogHandler, 
-    /// so that you can able to handle exception occuring from base classes seperately
+    /// Exception class for all database exceptions
     /// </summary>
+    /// <remarks>Exception return by Database class</remarks>
+    /// <see cref="Database"/>
     public class DbDataException : System.Exception
     {
         public DbDataException(string msgFormat, params object[] args)
