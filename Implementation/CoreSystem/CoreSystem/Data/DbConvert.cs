@@ -18,7 +18,7 @@ using System;
 namespace CoreSystem.Data
 {
     /// <summary>
-    /// Class utility for converting database value in CLR value or vice versa
+    /// Converts database value into .NET system type or vice versa
     /// </summary>
     public static class DbConvert
     {
