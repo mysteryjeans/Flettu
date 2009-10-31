@@ -443,6 +443,11 @@
             Provider of connection string
             </summary>
         </member>
+        <member name="P:CoreSystem.Data.Database.DbProvider">
+            <summary>
+            Provider information
+            </summary>
+        </member>
         <member name="T:CoreSystem.Collections.DispatchedObservableCollection`1">
             <summary>
             This class is the replacement of WPF ObservableCollection class to support asyncrhonous updates for data binding scenarios

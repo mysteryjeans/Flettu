@@ -7,8 +7,10 @@ namespace CoreSystem.Data
     /// </summary>
     public enum DbProviderType
     {
-        Unknown = 0,
+        UnSupported = 0,
         Oracle = 1, 
-        SqlServer = 2
+        SqlServer = 2,
+        SqlServerCe = 3,
+        SQLite = 4
     }
 }
