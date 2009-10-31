@@ -46,7 +46,13 @@ namespace CoreSystem.Data
             if (string.Compare(provider, "System.Data.SqlClient", true) == 0)
                 return DbProviderType.SqlServer;
 
-            throw new DbDataException("{0} is not recognized provider name", provider);
+            if (string.Compare(provider, "System.Data.SqlServerCe.3.5", true) == 0)
+                return DbProviderType.SqlServerCe;
+
+            if (string.Compare(provider, "System.Data.SqlServerCe.3.5", true) == 0)
+                return DbProviderType.SQLite;
+
+            return DbProviderType.UnSupported;
         }
 
         /// <summary>
@@ -61,13 +67,11 @@ namespace CoreSystem.Data
             {
                 case DbProviderType.Oracle:
                     string strDate = value.ToString(Database.NetDateFormat);
-                    return string.Format("TO_DATE('{0}','{1}')", strDate, Database.OracleDateFormat);
-                    break;
+                    return string.Format("TO_DATE('{0}','{1}')", strDate, Database.OracleDateFormat);                    
                 case DbProviderType.SqlServer:
-                    return string.Format("CONVERT(DATETIME,'{0}',120)", value.ToString(Database.SqlDateFormat));
-                    break;
+                    return string.Format("CONVERT(DATETIME,'{0}',120)", value.ToString(Database.SqlDateFormat));                
                 default:
-                    throw new DbDataException("Failed to convert Date in [{0}] provider format", providerType);
+                    throw new DbDataException("Failed to convert Date for provider [{0}]", providerType);
             }
         }
 
@@ -108,6 +112,9 @@ namespace CoreSystem.Data
             get { return this.providerType; }
         }
 
+        /// <summary>
+        /// Provider information
+        /// </summary>
         public string DbProvider
         {
             get { return this.dbProvider.ToString(); }
@@ -218,13 +225,11 @@ namespace CoreSystem.Data
         /// <returns>New database parameter</returns>
         public DbParameter CreateParameter(object value, string paramName)
         {
-            if (this.ProviderType == DbProviderType.Oracle)
-                return new OracleParameter(paramName, value);
+            DbParameter parameter = this.dbProvider.CreateParameter();
+            parameter.ParameterName = paramName;
+            parameter.Value = value;
 
-            if (this.ProviderType == DbProviderType.SqlServer)
-                return new SqlParameter(paramName, value);
-
-            throw new Exception("CreateParameter method only support Oracle and Sql Server provider type");
+            return parameter;
         }
 
         /// <summary>

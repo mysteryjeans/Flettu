@@ -26,9 +26,11 @@
     <RootNamespaceTitle>CoreSystem Library</RootNamespaceTitle>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="CoreSystem.Collections" isDocumented="True" xmlns="">Collections classes</NamespaceSummaryItem>
-<NamespaceSummaryItem name="CoreSystem.Data" isDocumented="True" xmlns="">Data access classes</NamespaceSummaryItem>
-<NamespaceSummaryItem name="CoreSystem.ValueTypeExtension" isDocumented="True" xmlns="">Value type extension classes</NamespaceSummaryItem></NamespaceSummaries>
+      <NamespaceSummaryItem name="CoreSystem.Data" isDocumented="True" xmlns="">Data access classes</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="CoreSystem.ValueTypeExtension" isDocumented="True" xmlns="">Value type extension classes</NamespaceSummaryItem>
+    </NamespaceSummaries>
     <KeepLogFile>False</KeepLogFile>
+    <HelpFileVersion>1.0.3582.40750</HelpFileVersion>
   </PropertyGroup>
   <!-- There are no properties for these two groups but they need to appear in
        order for Visual Studio to perform the build. -->
