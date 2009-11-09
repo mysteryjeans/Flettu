@@ -4,7 +4,6 @@ using System.Data;
 using System.Globalization;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Data.OracleClient;
 
 
 namespace CoreSystem.Data
