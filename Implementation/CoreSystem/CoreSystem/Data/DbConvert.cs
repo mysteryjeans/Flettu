@@ -124,8 +124,12 @@ namespace CoreSystem.Data
             if (value == null || value is DBNull)
                 return new Nullable<T>();
 
-            try { return new Nullable<T>((T)value); }
-            catch { return new Nullable<T>(); }
+            if (value is T)
+                return new Nullable<T>((T)value);
+            else
+                return new Nullable<T>();
+            //try { return new Nullable<T>((T)value); }
+            //catch { return new Nullable<T>(); }
         }
 
         public static DateTime ToDateTime(object value)
