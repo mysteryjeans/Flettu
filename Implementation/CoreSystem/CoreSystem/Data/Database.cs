@@ -32,6 +32,11 @@ namespace CoreSystem.Data
             : this(settings.Name, settings.ProviderName, settings.ConnectionString)
         { }
 
+        public Database(string name, string provider, string connectUrl, DbProviderFactory providerFactory)
+        {
+            this.Init(name, provider, connectUrl, providerFactory);
+        }
+
         /// <summary>
         /// Gets DbProviderType for provider name
         /// </summary>
@@ -621,11 +626,32 @@ namespace CoreSystem.Data
         /// <param name="provider">Provider name i.e. System.Data.SqlClient</param>
         /// <param name="connectUrl">Database connection string</param>
         private void Init(string name, string provider, string connectUrl)
-        {
+        {            
             try
             {
                 this.name = name;
                 this.dbProvider = DbProviderFactories.GetFactory(provider);
+                this.providerType = Database.GetProviderType(provider);
+                this.connectUrl = connectUrl;
+            }
+            catch (Exception excep)
+            {
+                throw new DbDataException(excep, "Failed to instantiate database from configuration file. Section: {0}", this.name);
+            }
+        }
+
+        /// <summary>
+        /// Initialized Database class instance
+        /// </summary>
+        /// <param name="name">Name of connection string</param>
+        /// <param name="provider">Provider name i.e. System.Data.SqlClient</param>
+        /// <param name="connectUrl">Database connection string</param>
+        private void Init(string name, string provider, string connectUrl, DbProviderFactory providerFactory)
+        {
+            try
+            {
+                this.name = name;
+                this.dbProvider = providerFactory;
                 this.providerType = Database.GetProviderType(provider);
                 this.connectUrl = connectUrl;
             }
