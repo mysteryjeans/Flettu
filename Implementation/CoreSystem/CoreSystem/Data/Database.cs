@@ -4,6 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.Configuration;
 using System.Data.SqlClient;
+using CoreSystem.Crypto;
 
 
 namespace CoreSystem.Data
@@ -20,6 +21,7 @@ namespace CoreSystem.Data
 
         private DbProviderFactory dbProvider;
         private string name;
+        private string provider;
         private string connectUrl;
         private DbProviderType providerType;
 
@@ -53,7 +55,7 @@ namespace CoreSystem.Data
             if (string.Compare(provider, "System.Data.SqlServerCe.3.5", true) == 0)
                 return DbProviderType.SqlServerCe;
 
-            if (string.Compare(provider, "System.Data.SqlServerCe.3.5", true) == 0)
+            if (string.Compare(provider, "System.Data.SQLite", true) == 0)
                 return DbProviderType.SQLite;
 
             return DbProviderType.UnSupported;
@@ -71,9 +73,9 @@ namespace CoreSystem.Data
             {
                 case DbProviderType.Oracle:
                     string strDate = value.ToString(Database.NetDateFormat);
-                    return string.Format("TO_DATE('{0}','{1}')", strDate, Database.OracleDateFormat);                    
+                    return string.Format("TO_DATE('{0}','{1}')", strDate, Database.OracleDateFormat);
                 case DbProviderType.SqlServer:
-                    return string.Format("CONVERT(DATETIME,'{0}',120)", value.ToString(Database.SqlDateFormat));                
+                    return string.Format("CONVERT(DATETIME,'{0}',120)", value.ToString(Database.SqlDateFormat));
                 default:
                     throw new DbDataException("Failed to convert Date for provider [{0}]", providerType);
             }
@@ -90,7 +92,7 @@ namespace CoreSystem.Data
         {
             return ToDate(DateTime.ParseExact(dateStr, dateFormat, DateTimeFormatInfo.InvariantInfo), providerType);
         }
-        
+
         /// <summary>
         /// Name of Database instance
         /// </summary>
@@ -121,7 +123,7 @@ namespace CoreSystem.Data
         /// </summary>
         public string DbProvider
         {
-            get { return this.dbProvider.ToString(); }
+            get { return this.provider; }
         }
 
         /// <summary>
@@ -267,7 +269,7 @@ namespace CoreSystem.Data
             }
 
         }
-        
+
         /// <summary>
         /// Executes non query command in transaction
         /// </summary>
@@ -608,7 +610,7 @@ namespace CoreSystem.Data
                 }
             }
         }
-      
+
         /// <summary>
         /// Wrap value to DBMS UPPER function
         /// </summary>
@@ -626,17 +628,14 @@ namespace CoreSystem.Data
         /// <param name="provider">Provider name i.e. System.Data.SqlClient</param>
         /// <param name="connectUrl">Database connection string</param>
         private void Init(string name, string provider, string connectUrl)
-        {            
+        {
             try
             {
-                this.name = name;
-                this.dbProvider = DbProviderFactories.GetFactory(provider);
-                this.providerType = Database.GetProviderType(provider);
-                this.connectUrl = connectUrl;
+                this.Init(name, provider, connectUrl, DbProviderFactories.GetFactory(provider));
             }
             catch (Exception excep)
             {
-                throw new DbDataException(excep, "Failed to instantiate database from configuration file. Section: {0}", this.name);
+                throw (excep is DbDataException) ? excep : new DbDataException(excep, "Failed to instantiate database from configuration file. Section: {0}", this.name);
             }
         }
 
@@ -646,19 +645,51 @@ namespace CoreSystem.Data
         /// <param name="name">Name of connection string</param>
         /// <param name="provider">Provider name i.e. System.Data.SqlClient</param>
         /// <param name="connectUrl">Database connection string</param>
+        /// <param name="providerFactory">Factory class of provider</param>
         private void Init(string name, string provider, string connectUrl, DbProviderFactory providerFactory)
         {
             try
             {
                 this.name = name;
+                this.provider = provider;
                 this.dbProvider = providerFactory;
-                this.providerType = Database.GetProviderType(provider);
-                this.connectUrl = connectUrl;
+                this.providerType = Database.GetProviderType(provider);                
+                this.connectUrl = GetConnectionString(connectUrl);
             }
             catch (Exception excep)
             {
                 throw new DbDataException(excep, "Failed to instantiate database from configuration file. Section: {0}", this.name);
             }
+        }
+
+        public static string GetConnectionString(string connectUrl)
+        {
+            if (string.IsNullOrEmpty(connectUrl))
+                throw new ArgumentNullException("connectUrl");
+
+            string[] tokenParts;
+            string[] tokens = connectUrl.Split(';');
+
+            foreach (string token in tokens)
+            {
+                if (!string.IsNullOrEmpty(token) && (tokenParts = token.Split('=')) != null)
+                {
+
+                    if (string.Equals(tokenParts[0].Trim(), "EncConnectUrl", StringComparison.OrdinalIgnoreCase))
+                    {
+                        int equalsIndex = token.IndexOf('=');
+                        return (new Cipher()).Decrypt(token.Substring(equalsIndex + 1).Trim()); 
+                    }
+                    if (string.Equals(tokenParts[0].Trim(), "EncPassword", StringComparison.OrdinalIgnoreCase))
+                    {
+                        int equalsIndex = token.IndexOf('=');
+                        string decryptedPassword = (new Cipher()).Decrypt(token.Substring(equalsIndex + 1).Trim());
+                        return connectUrl.Replace(token, string.Format("Password={0}", decryptedPassword));
+                    }
+                }
+            }
+
+            return connectUrl;
         }
 
     }
