@@ -154,7 +154,7 @@ namespace CoreSystem.Collections
             {
                 get
                 {
-                    // Obtaining strong references
+                    // Obtaining strong reference
                     object target = this.Target;                    
                     Dispatcher dispatcher = this.Dispatcher;
 
