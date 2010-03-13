@@ -11,13 +11,15 @@ namespace CoreSystem.Crypto
     /// </summary>
     public class Cipher
     {
-        private static byte[] StaticKey = new byte[] { 0x66, 0x91, 0xE0, 0x8D, 0x92, 0x088, 0x7E, 0xBB, 0x5E, 0x2B, 0xBF, 0x60, 0x9E, 0x76, 0xA5, 0x55 };
+        private static byte[] StaticKey = new byte[] { 0x7A, 0x91, 0xDD, 0x5E, 0x2B, 0xBF, 0x60, 0x9E, 0x76, 0xE0, 0x8D, 0x92, 0x016, 0x7E, 0xA5, 0x55 };
 
         TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
 
         /// <summary>
         /// Default constructor that initializes object with static key
         /// </summary>
+        /// <remarks>Default constructor only initializes with same key, 
+        /// so it is not good for production</remarks>
         public Cipher()
             : this(StaticKey)
         { }
