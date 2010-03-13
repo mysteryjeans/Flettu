@@ -169,7 +169,7 @@ namespace CoreSystem.Data
             return (value == null) ? DBNull.Value : value;
         }
 
-        public static object ToObject(object value)
+        public static object CLRValue(object value)
         {
             return (value == DBNull.Value) ? null : value;
         }
