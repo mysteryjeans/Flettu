@@ -15,10 +15,18 @@ namespace CoreSystem.Crypto
 
         TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
 
+        /// <summary>
+        /// Default constructor that initializes object with static key
+        /// </summary>
         public Cipher()
             : this(StaticKey)
         { }
 
+
+        /// <summary>
+        /// Constructor that initializes object with encryption key
+        /// </summary>
+        /// <param name="key">Encyrption key</param>
         public Cipher(byte[] key)
         {
             tripleDES.Key = key;
@@ -26,6 +34,11 @@ namespace CoreSystem.Crypto
             tripleDES.Padding = PaddingMode.PKCS7;
         }
 
+        /// <summary>
+        /// Encrypt clear string
+        /// </summary>
+        /// <param name="clearString">Text to encrypt</param>
+        /// <returns>Encrypted text</returns>
         public string Encrypt(string clearString)
         {
             byte[] inputArray = UTF8Encoding.UTF8.GetBytes(clearString);
@@ -38,6 +51,11 @@ namespace CoreSystem.Crypto
             }
         }
 
+        /// <summary>
+        /// Decrypt encrypted string
+        /// </summary>
+        /// <param name="encString">Encrypted string</param>
+        /// <returns>Clear/descrypted string</returns>
         public string Decrypt(string encString)
         {
             byte[] inputArray = Convert.FromBase64String(encString);
