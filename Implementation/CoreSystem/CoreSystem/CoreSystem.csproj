@@ -85,6 +85,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentModel\BackgroundWorkerExtended.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Crypto\Cipher.cs" />
     <Compile Include="Collections\DispatchedObservableCollection.cs" />
     <Compile Include="Collections\DispatchEvent.cs" />
