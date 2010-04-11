@@ -9,36 +9,34 @@ namespace CoreSystem.ComponentModel
 {
     public class BackgroundWorkerExtended : BackgroundWorker
     {
-        public Thread WorkerThread { get; private set; }
-
-        protected override void OnDoWork(DoWorkEventArgs e)
+        public void Sleep(int millisecondTimeout)
         {
-            this.WorkerThread = Thread.CurrentThread;
-            base.OnDoWork(e);
+            lock (this)
+            {
+                Monitor.Wait(this, millisecondTimeout);
+            }
+        }
+
+        public void Sleep(TimeSpan timeout)
+        {
+            lock (this)
+            {
+                Monitor.Wait(this, timeout);
+            }
         }
 
         public void Interrupt()
         {
-            if (this.WorkerThread != null)
-                this.WorkerThread.Interrupt();
+            lock (this)
+            {
+                Monitor.Pulse(this);
+            }
         }
-
-        public void Join()
-        {
-            if (this.WorkerThread != null)
-                this.WorkerThread.Join();
-        }
-
-        public void Join(int milisecondsTimeout)
-        {
-            if (this.WorkerThread != null)
-                this.WorkerThread.Join(milisecondsTimeout);
-        }    
-
+        
         public void Stop()
         {
-            if (this.IsBusy)
-                this.WorkerThread.Abort();
+            this.CancelAsync();
+            this.Interrupt();
         }
     }
 }
