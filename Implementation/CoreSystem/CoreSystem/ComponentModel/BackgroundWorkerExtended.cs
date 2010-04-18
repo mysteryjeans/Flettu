@@ -21,7 +21,8 @@ namespace CoreSystem.ComponentModel
         {
             lock (this)
             {
-                Monitor.Wait(this, timeout);
+                if (!this.CancellationPending)
+                    Monitor.Wait(this, timeout);
             }
         }
 
