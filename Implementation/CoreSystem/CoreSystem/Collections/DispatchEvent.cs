@@ -59,7 +59,10 @@ namespace CoreSystem.Collections
         /// <param name="dispatcher">Dispatcher in which handler method should be called</param>
         public void Add(Delegate handler, Dispatcher dispatcher)
         {
-            handlerList.Add(new DispatchHandler(handler, dispatcher));
+            lock (this)
+            {
+                handlerList.Add(new DispatchHandler(handler, dispatcher));
+            }
         }
 
         /// <summary>
@@ -68,14 +71,17 @@ namespace CoreSystem.Collections
         /// <param name="handler">Handler method of subscriber</param>
         public void Remove(Delegate handler)
         {
-            var rmvHandlers = (from dispatchHandler in handlerList
-                               where dispatchHandler.DelegateEquals(handler)
-                               select dispatchHandler).ToArray();
-
-            if (rmvHandlers != null && rmvHandlers.Length > 0)
+            lock (this)
             {
-                this.handlerList.Remove(rmvHandlers[0]);
-                rmvHandlers[0].Dispose();
+                var rmvHandlers = (from dispatchHandler in handlerList
+                                   where dispatchHandler.DelegateEquals(handler)
+                                   select dispatchHandler).ToArray();
+
+                if (rmvHandlers != null && rmvHandlers.Length > 0)
+                {
+                    this.handlerList.Remove(rmvHandlers[0]);
+                    rmvHandlers[0].Dispose();
+                }
             }
         }
 
@@ -84,11 +90,14 @@ namespace CoreSystem.Collections
         /// </summary>
         public void Clear()
         {
-            foreach (DispatchHandler handler in this.handlerList)
+            lock (this)
             {
-                handler.Dispose();
+                foreach (DispatchHandler handler in this.handlerList)
+                {
+                    handler.Dispose();
+                }
+                this.handlerList.Clear();
             }
-            this.handlerList.Clear();
         }
 
         /// <summary>
@@ -98,17 +107,25 @@ namespace CoreSystem.Collections
         /// <param name="args">Event arguments</param>
         public void Fire(object sender, EventArgs args)
         {
-            var disposableHandler = from handler in handlerList
-                                    where handler.IsDisposable
-                                    select handler;
-            foreach (DispatchHandler rmvHandler in disposableHandler.ToArray())
+            DispatchHandler[] handlers;
+
+            lock (this)
             {
-                this.handlerList.Remove(rmvHandler);
-                rmvHandler.Dispose();
+                var disposibleHandlers = (from handler in handlerList
+                                          where handler.IsDisposable
+                                          select handler).ToArray();
+
+                foreach (DispatchHandler rmvHandler in disposibleHandlers)
+                {
+                    this.handlerList.Remove(rmvHandler);
+                    rmvHandler.Dispose();
+                }
+
+                handlers = handlerList.ToArray();
             }
 
-            foreach (DispatchHandler handler in handlerList)
-                handler.Invoke(sender, args);            
+            foreach (DispatchHandler handler in handlers)
+                handler.Invoke(sender, args);
         }
 
         #endregion
@@ -130,9 +147,9 @@ namespace CoreSystem.Collections
 
             public DispatchHandler(Delegate handler, Dispatcher dispatcher)
             {
-                this.handlerInfo = handler.Method;              
+                this.handlerInfo = handler.Method;
                 this.targetRef = new WeakReference(handler.Target);
-                this.dispatcherRef = new WeakReference(dispatcher);                
+                this.dispatcherRef = new WeakReference(dispatcher);
             }
 
             private Dispatcher Dispatcher
@@ -144,7 +161,7 @@ namespace CoreSystem.Collections
             {
                 get { return this.targetRef.Target; }
             }
-            
+
             private bool IsDispatcherThreadAlive
             {
                 get { return this.Dispatcher.Thread.IsAlive; }
@@ -155,7 +172,7 @@ namespace CoreSystem.Collections
                 get
                 {
                     // Obtaining strong reference
-                    object target = this.Target;                    
+                    object target = this.Target;
                     Dispatcher dispatcher = this.Dispatcher;
 
                     //Checking target object(subscriber) and its thread state
@@ -165,7 +182,7 @@ namespace CoreSystem.Collections
                                (dispatcher.Thread.ThreadState & (ThreadState.Aborted
                                                                 | ThreadState.Stopped
                                                                 | ThreadState.StopRequested
-                                                                | ThreadState.AbortRequested)) != 0 ));
+                                                                | ThreadState.AbortRequested)) != 0));
                 }
             }
 
@@ -183,8 +200,8 @@ namespace CoreSystem.Collections
             {
                 // Obtaining strong refereces
                 object target = this.Target;
-                Dispatcher dispatcher = this.Dispatcher;              
-                
+                Dispatcher dispatcher = this.Dispatcher;
+
                 // Invoking if it is still alive
                 if (!this.IsDisposable)
                 {
@@ -218,26 +235,25 @@ namespace CoreSystem.Collections
                     }
 
                 }
-            }           
+            }
 
             public bool DelegateEquals(Delegate other)
             {
                 object target = this.Target;
-                return (target != null 
-                        && object.ReferenceEquals(target, other.Target) 
-                        &&  this.handlerInfo.Name == other.Method.Name);
-            }          
+                return (target != null
+                        && object.ReferenceEquals(target, other.Target)
+                        && this.handlerInfo.Name == other.Method.Name);
+            }
 
             public void Dispose()
             {
                 this.targetRef = null;
-                this.handlerInfo = null;                
-                this.dispatcherRef = null;                    
+                this.handlerInfo = null;
+                this.dispatcherRef = null;
             }
 
         }
 
-        #endregion     
-
+        #endregion
     }
 }
