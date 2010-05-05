@@ -9,6 +9,7 @@ namespace CoreSystem.ComponentModel
 {
     public class BackgroundWorkerExtended : BackgroundWorker
     {
+        private bool isInterrupted = false;
         public void Sleep(int millisecondTimeout)
         {
             lock (this)
@@ -26,12 +27,23 @@ namespace CoreSystem.ComponentModel
             }
         }
 
-        public void Interrupt()
+        public bool IsInterrupted()
         {
             lock (this)
             {
-                Monitor.Pulse(this);
+                bool lastInterrupt = isInterrupted;
+                isInterrupted = false;
+                return lastInterrupt;
             }
+        }
+
+        public void Interrupt()
+        {
+            //lock (this)
+            //{
+                isInterrupted = true;
+                Monitor.Pulse(this);
+            //}
         }
         
         public void Stop()
