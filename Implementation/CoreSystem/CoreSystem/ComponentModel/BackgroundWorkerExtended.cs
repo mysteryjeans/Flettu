@@ -39,11 +39,11 @@ namespace CoreSystem.ComponentModel
 
         public void Interrupt()
         {
-            //lock (this)
-            //{
+            lock (this)
+            {
                 isInterrupted = true;
                 Monitor.Pulse(this);
-            //}
+            }
         }
         
         public void Stop()
