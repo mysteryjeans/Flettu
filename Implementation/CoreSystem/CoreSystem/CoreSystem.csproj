@@ -100,6 +100,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefTypeExtension\ExceptionExtesion.cs" />
     <Compile Include="RefTypeExtension\IEnumerableExtension.cs" />
+    <Compile Include="ValueTypeExtension\CharExtension.cs" />
     <Compile Include="ValueTypeExtension\EnumExtentsion.cs" />
     <Compile Include="ValueTypeExtension\StringExtension.cs" />
   </ItemGroup>
