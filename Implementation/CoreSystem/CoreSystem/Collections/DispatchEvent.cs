@@ -141,6 +141,8 @@ namespace CoreSystem.Collections
         /// </remarks>
         private class DispatchHandler : IDisposable
         {
+            private static readonly TimeSpan INVOKE_TIMEOUT = TimeSpan.FromMilliseconds(10);
+
             private MethodInfo handlerInfo;
             private WeakReference targetRef;
             private WeakReference dispatcherRef;
@@ -208,11 +210,10 @@ namespace CoreSystem.Collections
                     // Invoking handler in the same thread from which it was registered
                     if (this.IsDispatcherThreadAlive)
                     {
-                        dispatcher.Invoke(DispatcherPriority.Send, new EventHandler(
-                                                                                    delegate(object sender, EventArgs e)
-                                                                                    {
-                                                                                        this.handlerInfo.Invoke(target, new object[] { arg, e });
-                                                                                    }), arg, args);
+                        dispatcher.Invoke(new EventHandler(delegate(object sender, EventArgs e)
+                                                           {
+                                                               this.handlerInfo.Invoke(target, new object[] { arg, e });
+                                                           }), INVOKE_TIMEOUT, arg, args[0]);
                     }
                     // if subscriber is derive from DispatcherObject class
                     // than leaving method call to be executed when thread got alive again

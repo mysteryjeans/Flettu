@@ -13,35 +13,49 @@ namespace CoreSystem.ComponentModel
 
         private bool isInterrupted;
 
-        private Thread orignalThread;
+        private bool isThreadAborted;
+
         private Thread workerThread;
-
-
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-            this.orignalThread = Thread.CurrentThread;
+            this.workerThread = Thread.CurrentThread;
 
-            this.workerThread = new Thread(new ThreadStart(delegate
-                {
-                    try
-                    {
-                        base.OnDoWork(e);
-                    }
-                    catch (ThreadAbortException)
-                    {
-                        Thread.ResetAbort();
-                    }
-                }));
-
-            this.workerThread.Start();
-            this.workerThread.Join();
+            try
+            {
+                base.OnDoWork(e);
+            }
+            catch (ThreadAbortException)
+            {
+                isThreadAborted = true;
+                //Thread.ResetAbort();
+            }
         }
+
+        protected override void OnProgressChanged(ProgressChangedEventArgs e)
+        {
+            if (isThreadAborted) return;
+
+            base.OnProgressChanged(e);
+        }      
 
         protected override void OnRunWorkerCompleted(RunWorkerCompletedEventArgs e)
         {
             base.OnRunWorkerCompleted(e);
         }
+
+        public new void ReportProgress(int percentProgress)
+        {
+            if (isThreadAborted) return;
+            base.ReportProgress(percentProgress);
+        }
+
+        public new void ReportProgress(int percentProgress, object userState)
+        {
+            if (isThreadAborted) return;
+            base.ReportProgress(percentProgress, userState);
+        }
+
 
         public void Sleep(int millisecondTimeout)
         {
@@ -87,15 +101,13 @@ namespace CoreSystem.ComponentModel
 
             if (this.workerThread != null)
             {
-                this.workerThread.Join(3000);
+                this.workerThread.Join(10);
                 if (this.workerThread.IsAlive)
                 {
+                    this.Interrupt();
                     this.workerThread.Abort();
-                    this.orignalThread.Join(3000);
-
-                    if (this.orignalThread.IsAlive)
-                        this.orignalThread.Abort();
-                }              
+                    //this.workerThread.Join();
+                }
             }
         }
     }
