@@ -247,9 +247,9 @@ namespace CoreSystem.Collections
 
             public void Dispose()
             {
-                this.targetRef = null;
+                //this.targetRef = null;
                 this.handlerInfo = null;
-                this.dispatcherRef = null;
+                //this.dispatcherRef = null;
             }
 
         }
