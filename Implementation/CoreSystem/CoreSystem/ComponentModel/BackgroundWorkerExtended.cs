@@ -17,6 +17,11 @@ namespace CoreSystem.ComponentModel
 
         private Thread workerThread;
 
+        public bool CancellationPending
+        {
+            get { return base.CancellationPending || isThreadAborted; }
+        }
+
         protected override void OnDoWork(DoWorkEventArgs e)
         {
             this.workerThread = Thread.CurrentThread;
@@ -28,7 +33,7 @@ namespace CoreSystem.ComponentModel
             catch (ThreadAbortException)
             {
                 isThreadAborted = true;
-                //Thread.ResetAbort();
+                Thread.ResetAbort();
             }
         }
 
@@ -55,7 +60,6 @@ namespace CoreSystem.ComponentModel
             if (isThreadAborted) return;
             base.ReportProgress(percentProgress, userState);
         }
-
 
         public void Sleep(int millisecondTimeout)
         {
@@ -100,11 +104,10 @@ namespace CoreSystem.ComponentModel
             this.Interrupt();
 
             if (this.workerThread != null)
-            {
+            {              
                 this.workerThread.Join(10);
                 if (this.workerThread.IsAlive)
-                {
-                    this.Interrupt();
+                {                   
                     this.workerThread.Abort();
                     //this.workerThread.Join();
                 }
