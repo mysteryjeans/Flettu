@@ -17,29 +17,35 @@ namespace CoreSystem.Data
         private const string DEFAULT_DB = "default-db";
 
         private static Database defaultDb;
-        private static List<Database> databaseList= new List<Database>();
+        private static List<Database> databaseList = new List<Database>();
 
         /// <summary>
         /// Creates Database class instances againts each connection string defined in config file
         /// </summary>
+        /// <remarks>It ignores any connection entry which have emtpy ConnectionString, Name or ProviderName</remarks>
         /// <see cref="Database"/>
         static DbFactory()
         {
             foreach (ConnectionStringSettings configSettings in ConfigurationManager.ConnectionStrings)
             {
-                Database database = new Database(configSettings);                
-                databaseList.Add(database);
-                
-                if (!string.IsNullOrEmpty(configSettings.Name) 
-                    && configSettings.Name.ToLower() == DEFAULT_DB)
-                
-                    defaultDb = database;
-            }
+                if (!string.IsNullOrEmpty(configSettings.ConnectionString) 
+                    && !string.IsNullOrEmpty(configSettings.Name)
+                    && !string.IsNullOrEmpty(configSettings.ProviderName))
+                {
+                    Database database = new Database(configSettings);
+                    databaseList.Add(database);
 
-            if (defaultDb == null && databaseList.Count != 0)
-                defaultDb = databaseList[0];
+                    if (!string.IsNullOrEmpty(configSettings.Name)
+                        && configSettings.Name.ToLower() == DEFAULT_DB)
+
+                        defaultDb = database;
+                }
+
+                if (defaultDb == null && databaseList.Count != 0)
+                    defaultDb = databaseList[0];
+            }
         }
-        
+
         /// <summary>
         /// Gets default Database instance which with connection string name: Default-Db
         /// </summary>
@@ -61,7 +67,7 @@ namespace CoreSystem.Data
         /// <returns>Database class instance</returns>
         /// <see cref="Database"/>
         public static Database GetDatabase(string name)
-        {  
+        {
             foreach (Database database in databaseList)
                 if (database.Name == name)
                     return database;
