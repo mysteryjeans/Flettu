@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.ObjectModel;
 
 namespace CoreSystem.RefTypeExtension
 {
@@ -11,6 +12,11 @@ namespace CoreSystem.RefTypeExtension
         {
             foreach (T item in enumerable)
                 action(item);
+        }
+
+        public static ReadOnlyCollection<T> ToReadOnly<T>(this IEnumerable<T> collection)
+        {
+            return (new List<T>(collection)).AsReadOnly();
         }
     }
 }

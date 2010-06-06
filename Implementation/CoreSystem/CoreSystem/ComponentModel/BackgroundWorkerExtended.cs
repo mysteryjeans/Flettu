@@ -105,11 +105,10 @@ namespace CoreSystem.ComponentModel
 
             if (this.workerThread != null)
             {              
-                this.workerThread.Join(10);
+                this.workerThread.Join(100);
                 if (this.workerThread.IsAlive)
                 {                   
                     this.workerThread.Abort();
-                    //this.workerThread.Join();
                 }
             }
         }

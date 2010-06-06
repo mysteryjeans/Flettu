@@ -70,5 +70,31 @@ namespace CoreSystem.ValueTypeExtension
         {
             return value != null && value.Length > length ? value.Substring(0, length) : value;
         }
+
+        /// <summary>
+        ///  Replaces the format item in a specified System.String with the text equivalent
+        ///  of the value of a specified System.Object instance.
+        /// </summary>
+        /// <param name="value">A composite format string</param>
+        /// <param name="arg0">An System.Object to format</param>
+        /// <returns>A copy of format in which the first format item has been replaced by the
+        /// System.String equivalent of arg0</returns>
+        public static string Format(this string value, object arg0)
+        {
+            return string.Format(value, arg0);
+        }
+
+        /// <summary>
+        ///  Replaces the format item in a specified System.String with the text equivalent
+        ///  of the value of a specified System.Object instance.
+        /// </summary>
+        /// <param name="value">A composite format string</param>
+        /// <param name="args">An System.Object array containing zero or more objects to format.</param>
+        /// <returns>A copy of format in which the format items have been replaced by the System.String
+        /// equivalent of the corresponding instances of System.Object in args.</returns>
+        public static string Format(this string value, params object[] args)
+        {
+            return string.Format(value, args);
+        }
     }
 }
