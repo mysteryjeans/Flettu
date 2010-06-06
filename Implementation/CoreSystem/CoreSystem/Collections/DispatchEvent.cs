@@ -125,7 +125,7 @@ namespace CoreSystem.Collections
             }
 
             foreach (DispatchHandler handler in handlers)
-                handler.Invoke(sender, args);
+                handler.Invoke(Dispatcher.CurrentDispatcher, sender, args);
         }
 
         #endregion
@@ -166,7 +166,7 @@ namespace CoreSystem.Collections
 
             private bool IsDispatcherThreadAlive
             {
-                get { return this.Dispatcher.Thread.IsAlive; }
+                get { return this.Dispatcher.Thread.IsAlive && this.Dispatcher.Thread.ThreadState != ThreadState.WaitSleepJoin; }
             }
 
             public bool IsDisposable
@@ -191,21 +191,25 @@ namespace CoreSystem.Collections
             /// <summary>
             /// Invoke handler method with associated dispatcher
             /// </summary>
-            /// <param name="arg">Sender of event</param>
+            /// <param name="sender">Sender of event</param>
             /// <param name="args">Arguments</param>
             /// <remarks>
             /// Only invoke handlers method if. 
             ///     a) Subscriber is still alive (not claimed by GC)
             ///     b) Subscriber thread is alive
             /// </remarks>
-            public void Invoke(object arg, params object[] args)
+            public void Invoke(Dispatcher currentDispatcher, object sender, EventArgs args)
             {
                 // Obtaining strong refereces
                 object target = this.Target;
                 Dispatcher dispatcher = this.Dispatcher;
 
+                if (currentDispatcher.Equals(dispatcher))
+                {
+                    this.handlerInfo.Invoke(target, new object[] { sender, args });
+                }
                 // Invoking if it is still alive
-                if (!this.IsDisposable)
+                else if (!this.IsDisposable)
                 {
                     // Invoking handler in the same thread from which it was registered
                     if (this.IsDispatcherThreadAlive)
@@ -214,31 +218,27 @@ namespace CoreSystem.Collections
                         //                                   {
                         //                                       this.handlerInfo.Invoke(target, new object[] { arg, e });
                         //                                   }), INVOKE_TIMEOUT, arg, args[0]);
-                        dispatcher.Invoke(DispatcherPriority.Send, new EventHandler(
-                                                                                        delegate(object sender, EventArgs e)
+                        dispatcher.Invoke(DispatcherPriority.Send, new EventHandler(delegate(object sender2, EventArgs e)
                                                                                         {
-                                                                                            this.handlerInfo.Invoke(target, new object[] { arg, e });
-                                                                                        }), arg, args);
+                                                                                            this.handlerInfo.Invoke(target, new object[] { sender2, e });
+                                                                                        }), sender, args);
 
                     }
                     // if subscriber is derive from DispatcherObject class
                     // than leaving method call to be executed when thread got alive again
-                    else if (target is DispatcherObject)
+                    else if (target is DispatcherObject || target is System.Windows.Forms.Control)
                     {
                         dispatcher.BeginInvoke(DispatcherPriority.Send, new EventHandler(
-                                                                                        delegate(object sender, EventArgs e)
+                                                                                        delegate(object sender2, EventArgs e)
                                                                                         {
-                                                                                            this.handlerInfo.Invoke(target, new object[] { arg, e });
-                                                                                        }), arg, args);
+                                                                                            this.handlerInfo.Invoke(target, new object[] { sender2, e });
+                                                                                        }), sender, args);
                     }
                     // if subscriber is not derive from DispatcherObject class
                     // than invoking method(handler) in current thread (The thread that reaise this event)
                     else
                     {
-                        ArrayList paramList = new ArrayList();
-                        paramList.Add(arg);
-                        paramList.AddRange(args);
-                        this.handlerInfo.Invoke(target, paramList.ToArray());
+                        this.handlerInfo.Invoke(target, new object[] { sender, args });
                     }
 
                 }
