@@ -32,13 +32,17 @@ namespace CoreSystem.Data
                     && !string.IsNullOrEmpty(configSettings.Name)
                     && !string.IsNullOrEmpty(configSettings.ProviderName))
                 {
-                    Database database = new Database(configSettings);
-                    databaseList.Add(database);
+                    try
+                    {
+                        Database database = new Database(configSettings);
+                        databaseList.Add(database);
 
-                    if (!string.IsNullOrEmpty(configSettings.Name)
-                        && configSettings.Name.ToLower() == DEFAULT_DB)
+                        if (!string.IsNullOrEmpty(configSettings.Name)
+                            && configSettings.Name.ToLower() == DEFAULT_DB)
 
-                        defaultDb = database;
+                            defaultDb = database;
+                    }
+                    catch { }
                 }
 
                 if (defaultDb == null && databaseList.Count != 0)

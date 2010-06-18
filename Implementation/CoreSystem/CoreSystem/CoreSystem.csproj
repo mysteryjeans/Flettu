@@ -103,6 +103,7 @@
     <Compile Include="RefTypeExtension\IEnumerableExtension.cs" />
     <Compile Include="Util\Guard.cs" />
     <Compile Include="ValueTypeExtension\CharExtension.cs" />
+    <Compile Include="ValueTypeExtension\DataTimeExtension.cs" />
     <Compile Include="ValueTypeExtension\EnumExtentsion.cs" />
     <Compile Include="ValueTypeExtension\StringExtension.cs" />
   </ItemGroup>
