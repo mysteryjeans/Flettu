@@ -112,7 +112,7 @@ namespace CoreSystem.Collections
             lock (this)
             {
                 var disposibleHandlers = (from handler in handlerList
-                                          where handler.IsDisposable
+                                          where !handler.NotDisposable
                                           select handler).ToArray();
 
                 foreach (DispatchHandler rmvHandler in disposibleHandlers)
@@ -179,12 +179,27 @@ namespace CoreSystem.Collections
 
                     //Checking target object(subscriber) and its thread state
                     return (target == null
-                            || dispatcher == null
                             || (target is DispatcherObject &&
-                               (dispatcher.Thread.ThreadState & (ThreadState.Aborted
-                                                                | ThreadState.Stopped
-                                                                | ThreadState.StopRequested
-                                                                | ThreadState.AbortRequested)) != 0));
+                                   (dispatcher == null
+                                    || dispatcher.HasShutdownStarted
+                                    || dispatcher.HasShutdownFinished
+                                    || (dispatcher.Thread.ThreadState & (ThreadState.Aborted
+                                                                        | ThreadState.Stopped
+                                                                        | ThreadState.StopRequested
+                                                                        | ThreadState.AbortRequested)) != 0)));
+                }
+            }
+
+            public bool NotDisposable
+            {
+                get
+                {
+                    // Obtaining strong reference
+                    object target = this.Target;
+                    Dispatcher dispatcher = this.Dispatcher;
+
+                    //Checking target object(subscriber) and its thread state
+                    return (target != null && (!(target is DispatcherObject) || dispatcher != null));
                 }
             }
 
@@ -204,22 +219,22 @@ namespace CoreSystem.Collections
                 object target = this.Target;
                 Dispatcher dispatcher = this.Dispatcher;
 
-                if (currentDispatcher.Equals(dispatcher))
-                {
-                    this.handlerInfo.Invoke(target, new object[] { sender, args });
-                }
-                // Invoking if it is still alive
-                else if (!this.IsDisposable)
+                //if (currentDispatcher.Equals(dispatcher))
+                //{
+                //    this.handlerInfo.Invoke(target, new object[] { sender, args });
+                //}
+                //// Invoking if it is still alive
+                //else 
+                if (this.NotDisposable)
                 {
                     // if subscriber is derive from DispatcherObject class
                     // than leaving method call to be executed when thread got alive again
                     if (target is DispatcherObject || target is System.Windows.Forms.Control)
                     {
-                        dispatcher.BeginInvoke(DispatcherPriority.Send, new EventHandler(
-                                                                                        delegate(object sender2, EventArgs e)
-                                                                                        {
-                                                                                            this.handlerInfo.Invoke(target, new object[] { sender2, e });
-                                                                                        }), sender, args);
+                        dispatcher.BeginInvoke(DispatcherPriority.Send, new EventHandler(delegate(object sender2, EventArgs e)
+                                                                                         {
+                                                                                             this.handlerInfo.Invoke(target, new object[] { sender2, e });
+                                                                                         }), sender, args);
                     }
                     // Invoking handler in the same thread from which it was registered
                     //else if (this.IsDispatcherThreadAlive)
