@@ -22,6 +22,11 @@ namespace CoreSystem.ComponentModel
             get { return base.CancellationPending || isThreadAborted; }
         }
 
+        private bool IsStop
+        {
+            get { return isThreadAborted || !this.IsBusy; }
+        }
+
         protected override void OnDoWork(DoWorkEventArgs e)
         {
             this.workerThread = Thread.CurrentThread;
@@ -39,7 +44,7 @@ namespace CoreSystem.ComponentModel
 
         protected override void OnProgressChanged(ProgressChangedEventArgs e)
         {
-            if (isThreadAborted) return;
+            if (this.IsStop) return;
 
             base.OnProgressChanged(e);
         }      
@@ -51,13 +56,15 @@ namespace CoreSystem.ComponentModel
 
         public new void ReportProgress(int percentProgress)
         {
-            if (isThreadAborted) return;
+            if (this.IsStop) return;
+
             base.ReportProgress(percentProgress);
         }
 
         public new void ReportProgress(int percentProgress, object userState)
         {
-            if (isThreadAborted) return;
+            if (this.IsStop) return;
+
             base.ReportProgress(percentProgress, userState);
         }
 
