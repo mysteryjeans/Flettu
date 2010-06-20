@@ -24,7 +24,7 @@ namespace CoreSystem.ComponentModel
 
         private bool IsStop
         {
-            get { return isThreadAborted || !this.IsBusy; }
+            get { return this.CancellationPending || !this.IsBusy; }
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
