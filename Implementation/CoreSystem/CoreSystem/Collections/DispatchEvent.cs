@@ -214,10 +214,11 @@ namespace CoreSystem.Collections
                     // Invoking handler in the same thread from which it was registered
                     if (this.IsDispatcherThreadAlive)
                     {
-                        //dispatcher.Invoke(new EventHandler(delegate(object sender, EventArgs e)
+                        //dispatcher.Invoke(new EventHandler(delegate(object sender2, EventArgs e)
                         //                                   {
-                        //                                       this.handlerInfo.Invoke(target, new object[] { arg, e });
-                        //                                   }), INVOKE_TIMEOUT, arg, args[0]);
+                        //                                       this.handlerInfo.Invoke(target, new object[] { sender2, e });
+                        //                                   }), INVOKE_TIMEOUT, sender, args);
+
                         dispatcher.Invoke(DispatcherPriority.Send, new EventHandler(delegate(object sender2, EventArgs e)
                                                                                         {
                                                                                             this.handlerInfo.Invoke(target, new object[] { sender2, e });
