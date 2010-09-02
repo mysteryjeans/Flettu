@@ -1,0 +1,540 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CoreSystem</name>
+    </assembly>
+    <members>
+        <member name="T:CoreSystem.ValueTypeExtension.EnumExtentsion">
+            <summary>
+            This is class contains extension function(s) for enum objects
+            </summary>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.EnumExtentsion.ToDescription(System.Enum)">
+            <summary>
+            Returns description of enum value if attached with enum member through DiscriptionAttribute
+            </summary>        
+            <returns>Description of enum value</returns>
+            <see cref="T:System.ComponentModel.DescriptionAttribute"/>
+        </member>
+        <member name="T:CoreSystem.Collections.DispatchEvent">
+            <summary>
+            This class is alternative to .NET builtin events.
+            It stores subscriber's handler methods with repective dispatchers.
+            </summary>
+            <remarks>
+            It helps .NET windows forms and WPF controls to accept events from
+            other threads asynchronously
+            </remarks>
+            <see cref="T:System.Windows.Threading.DispatcherObject"/>
+        </member>
+        <member name="M:CoreSystem.Collections.DispatchEvent.Add(System.Delegate)">
+            <summary>
+            Add a new subscriber's handler method with its current dispatcher
+            </summary>
+            <param name="handler">Handler method of subscriber</param>
+        </member>
+        <member name="M:CoreSystem.Collections.DispatchEvent.Add(System.Delegate,System.Windows.Threading.Dispatcher)">
+            <summary>
+            Add a new subscriber's handler method with dispatcher 
+            </summary>
+            <param name="handler">Handler method of subscriber</param>
+            <param name="dispatcher">Dispatcher in which handler method should be called</param>
+        </member>
+        <member name="M:CoreSystem.Collections.DispatchEvent.Remove(System.Delegate)">
+            <summary>
+            Remove subscriber's handler method
+            </summary>
+            <param name="handler">Handler method of subscriber</param>
+        </member>
+        <member name="M:CoreSystem.Collections.DispatchEvent.Clear">
+            <summary>
+            Clear all handler's subscriptions
+            </summary>
+        </member>
+        <member name="M:CoreSystem.Collections.DispatchEvent.Fire(System.Object,System.EventArgs)">
+            <summary>
+            Invoke of handler method one by one with associated dispatcher
+            </summary>
+            <param name="sender">Sender of event</param>
+            <param name="args">Event arguments</param>
+        </member>
+        <member name="T:CoreSystem.Collections.DispatchEvent.DispatchHandler">
+            <summary>
+            Internal class to hold handler with associated dispatcher
+            </summary>
+            <remarks>
+            This class only holds weak reference so that it subscriber
+            could be claim by garbage collector
+            </remarks>
+        </member>
+        <member name="M:CoreSystem.Collections.DispatchEvent.DispatchHandler.Invoke(System.Windows.Threading.Dispatcher,System.Object,System.EventArgs)">
+            <summary>
+            Invoke handler method with associated dispatcher
+            </summary>
+            <param name="sender">Sender of event</param>
+            <param name="args">Arguments</param>
+            <remarks>
+            Only invoke handlers method if. 
+                a) Subscriber is still alive (not claimed by GC)
+                b) Subscriber thread is alive
+            </remarks>
+        </member>
+        <member name="T:CoreSystem.Data.DbFactory">
+            <summary>
+            Factory class for creating Database class instances foreach connection string defined in configuration file
+            </summary>
+            <remarks>
+            It initialize in static constructor
+            </remarks>
+            <see cref="T:CoreSystem.Data.Database"/>
+        </member>
+        <member name="M:CoreSystem.Data.DbFactory.#cctor">
+            <summary>
+            Creates Database class instances againts each connection string defined in config file
+            </summary>
+            <remarks>It ignores any connection entry which have emtpy ConnectionString, Name or ProviderName</remarks>
+            <see cref="T:CoreSystem.Data.Database"/>
+        </member>
+        <member name="M:CoreSystem.Data.DbFactory.GetDefaultDatabase">
+            <summary>
+            Gets default Database instance which with connection string name: Default-Db
+            </summary>
+            <returns>Default Database object</returns>
+            <remarks>
+            If no connection string defined in config file with name 'Default-Db' 
+            than Database object of the first connection string will be returned
+            </remarks>
+            <see cref="T:CoreSystem.Data.Database"/>
+        </member>
+        <member name="M:CoreSystem.Data.DbFactory.GetDatabase(System.String)">
+            <summary>
+            Get Database class instance of connection string with specified name
+            </summary>
+            <param name="name">Name of connection string</param>
+            <returns>Database class instance</returns>
+            <see cref="T:CoreSystem.Data.Database"/>
+        </member>
+        <member name="T:CoreSystem.ValueTypeExtension.StringExtension">
+            <summary>
+            This class contain extension functions for string objects
+            </summary>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.In(System.String,System.String[])">
+            <summary>
+            Checks string object's value to array of string values
+            </summary>        
+            <param name="stringValues">Array of string values to compare</param>
+            <returns>Return true if any string value matches</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.ToEnum``1(System.String)">
+            <summary>
+            Converts string to enum object
+            </summary>
+            <typeparam name="T">Type of enum</typeparam>
+            <param name="value">String value to convert</param>
+            <returns>Returns enum object</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Right(System.String,System.Int32)">
+            <summary>
+            Returns characters from right of specified length
+            </summary>
+            <param name="value">String value</param>
+            <param name="length">Max number of charaters to return</param>
+            <returns>Returns string from right</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Left(System.String,System.Int32)">
+            <summary>
+            Returns characters from left of specified length
+            </summary>
+            <param name="value">String value</param>
+            <param name="length">Max number of charaters to return</param>
+            <returns>Returns string from left</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Format(System.String,System.Object)">
+            <summary>
+             Replaces the format item in a specified System.String with the text equivalent
+             of the value of a specified System.Object instance.
+            </summary>
+            <param name="value">A composite format string</param>
+            <param name="arg0">An System.Object to format</param>
+            <returns>A copy of format in which the first format item has been replaced by the
+            System.String equivalent of arg0</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Format(System.String,System.Object[])">
+            <summary>
+             Replaces the format item in a specified System.String with the text equivalent
+             of the value of a specified System.Object instance.
+            </summary>
+            <param name="value">A composite format string</param>
+            <param name="args">An System.Object array containing zero or more objects to format.</param>
+            <returns>A copy of format in which the format items have been replaced by the System.String
+            equivalent of the corresponding instances of System.Object in args.</returns>
+        </member>
+        <member name="T:CoreSystem.Data.DbDataException">
+            <summary>
+            Exception class for all database exceptions
+            </summary>
+            <remarks>Exception return by Database class</remarks>
+            <see cref="T:CoreSystem.Data.Database"/>
+        </member>
+        <member name="T:CoreSystem.Data.DbConvert">
+            <summary>
+            Converts database value into .NET system type or vice versa
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:CoreSystem.Data.DbConvert.DbValue(System.Object)" -->
+        <member name="T:CoreSystem.Data.Database">
+            <summary>
+            This class hide underlining DBMS provider and allows to work on abstract interfaces
+            </summary>
+            <remarks>This is very helpful to reduce boiler plate code</remarks>
+        </member>
+        <member name="M:CoreSystem.Data.Database.GetProviderType(System.String)">
+            <summary>
+            Gets DbProviderType for provider name
+            </summary>
+            <param name="provider">Provide name i.e. System.Data.OracleClient </param>
+            <returns>DbProviderType for provider name</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ToDate(System.DateTime,CoreSystem.Data.DbProviderType)">
+            <summary>
+            Converts to DBMS acceptable datetime format
+            </summary>
+            <param name="value">DateTime value</param>
+            <param name="providerType">DBMS provider type</param>
+            <returns>Datetime in string format</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ToDate(System.String,System.String,CoreSystem.Data.DbProviderType)">
+            <summary>
+            Converts datetime string to DBMS acceptable datetime format
+            </summary>
+            <param name="dateStr">DateTime string</param>
+            <param name="dateFormat">Format of datetime string</param>
+            <param name="providerType">DBMS provider type</param>
+            <returns>Datetime in string format</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateConnection">
+            <summary>
+            Creates a new connection of database
+            </summary>
+            <returns>New opened database connection</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateCommand(System.String,System.Data.Common.DbConnection,System.Data.CommandType)">
+            <summary>
+            Creates a new specific provider commands object
+            </summary>
+            <param name="cmdText">SQL command</param>
+            <param name="connection">Connection of database</param>
+            <param name="cmdType">Command type</param>
+            <returns>New database command object</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateCommand(System.String,System.Data.Common.DbConnection)">
+            <summary>
+            Creates new database command object for text command
+            </summary>
+            <param name="cmdText">SQL text command</param>
+            <param name="connection">Database connection</param>
+            <returns>New database command object</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateCommand(System.String,System.Data.Common.DbTransaction)">
+            <summary>
+            Creates new database command object and attaches it with transaction
+            </summary>
+            <param name="cmdText">SQL text command</param>
+            <param name="trans">Transaction to attach new command</param>
+            <returns>New database command object</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateCommand(System.String,System.Data.Common.DbTransaction,System.Data.CommandType)">
+            <summary>
+            Creates new database command object and attaches it with transaction
+            </summary>
+            <param name="cmdText">SQL command</param>
+            <param name="trans">Transaction to attach new command</param>
+            <param name="cmdType">SQL command type (Text, Procedure ...)</param>
+            <returns>New database command object</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateCommand(System.String,System.Data.CommandType)">
+            <summary>
+            Creates a new database command with a new connection object
+            </summary>
+            <param name="cmdText">SQL command</param>
+            <param name="cmdType">Command type (Text, Procedure ...)</param>
+            <returns>New database command object</returns>
+            <remarks>Connection should be dispose by caller</remarks>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateCommand(System.String)">
+            <summary>
+            Creates a new database command with a new connection object
+            </summary>
+            <param name="cmdText"></param>
+            <returns>New database command object</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateParameter">
+            <summary>
+            Creates a new database parameter
+            </summary>
+            <returns>New database parameter</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateParameter(System.Object,System.String)">
+            <summary>
+            Creates a new database parameter
+            </summary>
+            <param name="value">Value for parameter</param>
+            <param name="paramName">Parameter name</param>
+            <returns>New database parameter</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteNonQuery(System.String,System.Data.Common.DbConnection)">
+            <summary>
+            Executes non query command
+            </summary>
+            <param name="cmdText">Non query string</param>
+            <param name="connection">Database open connection</param>
+            <returns>Number of rows effect</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteNonQuery(System.String)">
+            <summary>
+            Executes non query command
+            </summary>
+            <param name="cmdText">Non query string</param>
+            <returns>Number of rows effected</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteNonQuery(System.String,System.Data.Common.DbTransaction)">
+            <summary>
+            Executes non query command in transaction
+            </summary>
+            <param name="cmdText">Non query string</param>
+            <param name="transaction">Database transaction</param>
+            <returns>Number of rows effected</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteReader(System.String,System.Data.Common.DbTransaction)">
+            <summary>
+            Executes query in transaction
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <param name="trans">Database transaction</param>
+            <returns>Open data reader</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteReader(System.String,System.Data.Common.DbConnection,System.Data.CommandBehavior)">
+            <summary>
+            Executes SQL query
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <param name="connection">Database open connection</param>
+            <param name="behavior">Command behavoir after execution</param>
+            <returns>Open data reader</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteReader(System.String,System.Data.Common.DbConnection)">
+            <summary>
+            Executes SQL query
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <param name="connection">Database open connection</param>
+            <returns>Open data reader</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteReader(System.String)">
+            <summary>
+            Executes query string
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <returns>Open data reader</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteQuery(System.String,System.Data.Common.DbConnection)">
+            <summary>
+            Execute query string
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <param name="connection">Database connection</param>
+            <returns>Result in a new DataTable</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteDataSet(System.String)">
+            <summary>
+            Executes query string
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <returns>Result in a new DataSet</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteDataSet(System.String,System.Data.Common.DbConnection)">
+            <summary>
+            Executes query string
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <param name="connection">Database connection</param>
+            <returns>Result in a new DataSet</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteDataSet(System.String,System.Data.Common.DbConnection,System.Data.DataSet)">
+            <summary>
+            Executes query string
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <param name="connection">Database connection</param>
+            <param name="retVal">DataSet in which result should be reflected</param>
+            <returns>DataSet with query result</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteDataSet(System.Data.Common.DbCommand)">
+            <summary>
+            Executes database command
+            </summary>
+            <param name="cmd">Database command object</param>
+            <returns>Result in a new DataSet</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteDataSet(System.String,System.Data.DataSet)">
+            <summary>
+            Executes query string
+            </summary>
+            <param name="cmdText">SQL query strign</param>
+            <param name="retVal">DataSet in which result should be reflected</param>
+            <returns>DataSet with new result</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteDataSet(System.String[],System.Data.DataSet)">
+            <summary>
+            Executes set of query strings
+            </summary>
+            <param name="querySet">SQL query strings</param>
+            <param name="retVal">DataSet in which result should be reflected</param>
+            <returns>DataSet with results of each query</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteQuery(System.String)">
+            <summary>
+            Execute query string
+            </summary>
+            <param name="cmdText">SQL query command</param>
+            <returns>Result in a new DataTable</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.GetDbSchemaTable(System.String)">
+            <summary>
+            Get table schema of specified table
+            </summary>
+            <param name="TableName">Table name</param>
+            <returns>Table schema in DataTable</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateDataAdapter(System.String,System.Data.CommandType)">
+            <summary>
+            Creates a new data adapter for specified select query
+            </summary>
+            <param name="selectQuery">SQL query string</param>
+            <param name="cmdType">Command type</param>
+            <returns>New data adapter</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.CreateDataAdapter(System.String)">
+            <summary>
+            Creates a new data adapter for select query
+            </summary>
+            <param name="selectQuery">SQL select query</param>
+            <returns>New data adapter</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteDataTable(System.String,System.Data.DataTable)">
+            <summary>
+            Executes query string and fill specified DataTable
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <param name="table">DataTable which should be filled</param>
+            <returns>Filled DataTable</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteDataTable(System.String)">
+            <summary>
+            Executes query string and return DataTable
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <returns>Result in a new DataTable</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteScalar(System.String)">
+            <summary>
+            Executes query string and return scalar value
+            </summary>
+            <param name="cmdText">SQL query strign</param>
+            <returns>Scalar value</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ToUpper(System.String)">
+            <summary>
+            Wrap value to DBMS UPPER function
+            </summary>
+            <param name="value">String value</param>
+            <returns>Value in UPPER function</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.Init(System.String,System.String,System.String)">
+            <summary>
+            Initialized Database class instance
+            </summary>
+            <param name="name">Name of connection string</param>
+            <param name="provider">Provider name i.e. System.Data.SqlClient</param>
+            <param name="connectUrl">Database connection string</param>
+        </member>
+        <member name="M:CoreSystem.Data.Database.Init(System.String,System.String,System.String,System.Data.Common.DbProviderFactory)">
+            <summary>
+            Initialized Database class instance
+            </summary>
+            <param name="name">Name of connection string</param>
+            <param name="provider">Provider name i.e. System.Data.SqlClient</param>
+            <param name="connectUrl">Database connection string</param>
+            <param name="providerFactory">Factory class of provider</param>
+        </member>
+        <member name="P:CoreSystem.Data.Database.Name">
+            <summary>
+            Name of Database instance
+            </summary>
+            <remarks>Same as connection string name</remarks>
+        </member>
+        <member name="P:CoreSystem.Data.Database.ConnectionString">
+            <summary>
+            Connection string
+            </summary>
+        </member>
+        <member name="P:CoreSystem.Data.Database.ProviderType">
+            <summary>
+            Provider of connection string
+            </summary>
+        </member>
+        <member name="P:CoreSystem.Data.Database.DbProvider">
+            <summary>
+            Provider information
+            </summary>
+        </member>
+        <member name="T:CoreSystem.Crypto.Cipher">
+            <summary>
+            Class is used for encrypting and descryption
+            </summary>
+        </member>
+        <member name="M:CoreSystem.Crypto.Cipher.#ctor">
+            <summary>
+            Default constructor that initializes object with static key
+            </summary>
+            <remarks>Default constructor only initializes with same key, 
+            so it is not good for production</remarks>
+        </member>
+        <member name="M:CoreSystem.Crypto.Cipher.#ctor(System.Byte[])">
+            <summary>
+            Constructor that initializes object with encryption key
+            </summary>
+            <param name="key">Encyrption key</param>
+        </member>
+        <member name="M:CoreSystem.Crypto.Cipher.Encrypt(System.String)">
+            <summary>
+            Encrypt clear string
+            </summary>
+            <param name="clearString">Text to encrypt</param>
+            <returns>Encrypted text</returns>
+        </member>
+        <member name="M:CoreSystem.Crypto.Cipher.Decrypt(System.String)">
+            <summary>
+            Decrypt encrypted string
+            </summary>
+            <param name="encString">Encrypted string</param>
+            <returns>Clear/descrypted string</returns>
+        </member>
+        <member name="T:CoreSystem.Data.DbProviderType">
+            <summary>
+            DBMS provider enumeration
+            </summary>
+        </member>
+        <member name="T:CoreSystem.Collections.DispatchedObservableCollection`1">
+            <summary>
+            This class is the replacement of WPF ObservableCollection class to support asyncrhonous updates for data binding scenarios
+            </summary>
+            <typeparam name="Titem">Type of object it will hold</typeparam>
+            <remarks>
+            It allows to be updated asynchronously from other threads without reaising exception
+            </remarks>
+            <see cref="!:ObservableCollection"/>
+        </member>
+    </members>
+</doc>
