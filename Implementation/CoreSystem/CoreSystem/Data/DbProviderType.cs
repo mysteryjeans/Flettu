@@ -11,6 +11,7 @@ namespace CoreSystem.Data
         Oracle = 1, 
         SqlServer = 2,
         SqlServerCe = 3,
-        SQLite = 4
+        SQLite = 4,
+        MySql = 5
     }
 }

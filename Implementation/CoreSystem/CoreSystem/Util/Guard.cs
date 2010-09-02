@@ -20,5 +20,13 @@ namespace CoreSystem.Util
             if (parameter.Length == 0)
                 throw new ArgumentException(message);
         }
+
+        public static void CheckNullOrTrimEmpty(string parameter, string message)
+        {
+            Guard.CheckNull(parameter, message);
+
+            if (parameter.Trim().Length == 0)
+                throw new ArgumentException(message);
+        }
     }
 }
