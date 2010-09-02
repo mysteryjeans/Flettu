@@ -58,6 +58,9 @@ namespace CoreSystem.Data
             if (string.Compare(provider, "System.Data.SQLite", true) == 0)
                 return DbProviderType.SQLite;
 
+            if (string.Compare(provider, "MySql.Data.MySqlClient", true) == 0)
+                return DbProviderType.MySql;
+
             return DbProviderType.UnSupported;
         }
 
@@ -653,7 +656,7 @@ namespace CoreSystem.Data
                 this.name = name;
                 this.provider = provider;
                 this.dbProvider = providerFactory;
-                this.providerType = Database.GetProviderType(provider);                
+                this.providerType = Database.GetProviderType(provider);
                 this.connectUrl = GetConnectionString(connectUrl);
             }
             catch (Exception excep)
@@ -678,7 +681,7 @@ namespace CoreSystem.Data
                     if (string.Equals(tokenParts[0].Trim(), "EncConnectUrl", StringComparison.OrdinalIgnoreCase))
                     {
                         int equalsIndex = token.IndexOf('=');
-                        return (new Cipher()).Decrypt(token.Substring(equalsIndex + 1).Trim()); 
+                        return (new Cipher()).Decrypt(token.Substring(equalsIndex + 1).Trim());
                     }
                     if (string.Equals(tokenParts[0].Trim(), "EncPassword", StringComparison.OrdinalIgnoreCase))
                     {
