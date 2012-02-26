@@ -270,7 +270,6 @@ namespace CoreSystem.Data
                 conn.Close();
                 return retVal;
             }
-
         }
 
         /// <summary>
@@ -283,11 +282,8 @@ namespace CoreSystem.Data
         {
             using (DbCommand cmd = this.CreateCommand(cmdText, transaction))
             {
-                int retVal = cmd.ExecuteNonQuery();
-                cmd.Connection = null;
-                return retVal;
+                return cmd.ExecuteNonQuery();
             }
-
         }
 
         /// <summary>
@@ -300,10 +296,7 @@ namespace CoreSystem.Data
         {
             using (DbCommand cmd = this.CreateCommand(cmdText, trans))
             {
-                DbDataReader retVal = cmd.ExecuteReader();
-                cmd.Transaction = null;
-                cmd.Connection = null;
-                return retVal;
+                return cmd.ExecuteReader();
             }
         }
 
@@ -318,9 +311,7 @@ namespace CoreSystem.Data
         {
             using (DbCommand cmd = this.CreateCommand(cmdText, connection, CommandType.Text))
             {
-                DbDataReader retVal = cmd.ExecuteReader(behavior);
-                cmd.Connection = null;
-                return retVal;
+                return cmd.ExecuteReader(behavior);
             }
         }
 
@@ -360,11 +351,27 @@ namespace CoreSystem.Data
                 DataTable retVal = new DataTable();
 
                 adapter.Fill(retVal);
-                cmd.CommandText = string.Empty;
-                cmd.Connection = null;
                 return retVal;
             }
+        }
 
+        /// <summary>
+        /// Execute query string in transaction
+        /// </summary>
+        /// <param name="cmdText">SQL query string</param>
+        /// <param name="transaction">Database transaction</param>
+        /// <returns>Result in a new DataTable</returns>
+        public DataTable ExecuteQuery(string cmdText, DbTransaction transaction)
+        {
+            using (DbCommand cmd = this.CreateCommand(cmdText, transaction, CommandType.Text))
+            {
+                DbDataAdapter adapter = this.dbProvider.CreateDataAdapter();
+                adapter.SelectCommand = cmd;
+                DataTable retVal = new DataTable();
+
+                adapter.Fill(retVal);
+                return retVal;
+            }
         }
 
         /// <summary>
@@ -408,11 +415,8 @@ namespace CoreSystem.Data
                 DbDataAdapter adapter = this.dbProvider.CreateDataAdapter();
                 adapter.SelectCommand = cmd;
                 adapter.Fill(retVal);
-                cmd.CommandText = string.Empty;
-                cmd.Connection = null;
                 return retVal;
             }
-
         }
 
         /// <summary>
@@ -443,12 +447,9 @@ namespace CoreSystem.Data
                 DbDataAdapter adapter = this.dbProvider.CreateDataAdapter();
                 adapter.SelectCommand = cmd;
                 adapter.Fill(retVal);
-                cmd.CommandText = string.Empty;
-                cmd.Connection = null;
                 conn.Close();
                 return retVal;
             }
-
         }
 
         /// <summary>
@@ -470,8 +471,6 @@ namespace CoreSystem.Data
                         cmd.CommandText = querySet[i];
                         adapter.Fill(retVal, string.Format("Table{0}", i));
                     }
-                    cmd.CommandText = string.Empty;
-                    cmd.Connection = null;
                     conn.Close();
                     return retVal;
                 }
