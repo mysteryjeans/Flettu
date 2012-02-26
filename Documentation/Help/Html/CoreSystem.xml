@@ -4,6 +4,12 @@
         <name>CoreSystem</name>
     </assembly>
     <members>
+        <member name="T:CoreSystem.Data.DbConvert">
+            <summary>
+            Converts database value into .NET system type or vice versa
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:CoreSystem.Data.DbConvert.DbValue(System.Object)" -->
         <member name="T:CoreSystem.ValueTypeExtension.EnumExtentsion">
             <summary>
             This is class contains extension function(s) for enum objects
@@ -15,6 +21,13 @@
             </summary>        
             <returns>Description of enum value</returns>
             <see cref="T:System.ComponentModel.DescriptionAttribute"/>
+        </member>
+        <member name="T:CoreSystem.Data.DbDataException">
+            <summary>
+            Exception class for all database exceptions
+            </summary>
+            <remarks>Exception return by Database class</remarks>
+            <see cref="T:CoreSystem.Data.Database"/>
         </member>
         <member name="T:CoreSystem.Collections.DispatchEvent">
             <summary>
@@ -79,6 +92,16 @@
                 b) Subscriber thread is alive
             </remarks>
         </member>
+        <member name="T:CoreSystem.Collections.DispatchedObservableCollection`1">
+            <summary>
+            This class is the replacement of WPF ObservableCollection class to support asyncrhonous updates for data binding scenarios
+            </summary>
+            <typeparam name="Titem">Type of object it will hold</typeparam>
+            <remarks>
+            It allows to be updated asynchronously from other threads without reaising exception
+            </remarks>
+            <see cref="!:ObservableCollection"/>
+        </member>
         <member name="T:CoreSystem.Data.DbFactory">
             <summary>
             Factory class for creating Database class instances foreach connection string defined in configuration file
@@ -114,75 +137,6 @@
             <returns>Database class instance</returns>
             <see cref="T:CoreSystem.Data.Database"/>
         </member>
-        <member name="T:CoreSystem.ValueTypeExtension.StringExtension">
-            <summary>
-            This class contain extension functions for string objects
-            </summary>
-        </member>
-        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.In(System.String,System.String[])">
-            <summary>
-            Checks string object's value to array of string values
-            </summary>        
-            <param name="stringValues">Array of string values to compare</param>
-            <returns>Return true if any string value matches</returns>
-        </member>
-        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.ToEnum``1(System.String)">
-            <summary>
-            Converts string to enum object
-            </summary>
-            <typeparam name="T">Type of enum</typeparam>
-            <param name="value">String value to convert</param>
-            <returns>Returns enum object</returns>
-        </member>
-        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Right(System.String,System.Int32)">
-            <summary>
-            Returns characters from right of specified length
-            </summary>
-            <param name="value">String value</param>
-            <param name="length">Max number of charaters to return</param>
-            <returns>Returns string from right</returns>
-        </member>
-        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Left(System.String,System.Int32)">
-            <summary>
-            Returns characters from left of specified length
-            </summary>
-            <param name="value">String value</param>
-            <param name="length">Max number of charaters to return</param>
-            <returns>Returns string from left</returns>
-        </member>
-        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Format(System.String,System.Object)">
-            <summary>
-             Replaces the format item in a specified System.String with the text equivalent
-             of the value of a specified System.Object instance.
-            </summary>
-            <param name="value">A composite format string</param>
-            <param name="arg0">An System.Object to format</param>
-            <returns>A copy of format in which the first format item has been replaced by the
-            System.String equivalent of arg0</returns>
-        </member>
-        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Format(System.String,System.Object[])">
-            <summary>
-             Replaces the format item in a specified System.String with the text equivalent
-             of the value of a specified System.Object instance.
-            </summary>
-            <param name="value">A composite format string</param>
-            <param name="args">An System.Object array containing zero or more objects to format.</param>
-            <returns>A copy of format in which the format items have been replaced by the System.String
-            equivalent of the corresponding instances of System.Object in args.</returns>
-        </member>
-        <member name="T:CoreSystem.Data.DbDataException">
-            <summary>
-            Exception class for all database exceptions
-            </summary>
-            <remarks>Exception return by Database class</remarks>
-            <see cref="T:CoreSystem.Data.Database"/>
-        </member>
-        <member name="T:CoreSystem.Data.DbConvert">
-            <summary>
-            Converts database value into .NET system type or vice versa
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:CoreSystem.Data.DbConvert.DbValue(System.Object)" -->
         <member name="T:CoreSystem.Data.Database">
             <summary>
             This class hide underlining DBMS provider and allows to work on abstract interfaces
@@ -344,6 +298,14 @@
             </summary>
             <param name="cmdText">SQL query string</param>
             <param name="connection">Database connection</param>
+            <returns>Result in a new DataTable</returns>
+        </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteQuery(System.String,System.Data.Common.DbTransaction)">
+            <summary>
+            Execute query string in transaction
+            </summary>
+            <param name="cmdText">SQL query string</param>
+            <param name="transaction">Database transaction</param>
             <returns>Result in a new DataTable</returns>
         </member>
         <member name="M:CoreSystem.Data.Database.ExecuteDataSet(System.String)">
@@ -521,20 +483,66 @@
             <param name="encString">Encrypted string</param>
             <returns>Clear/descrypted string</returns>
         </member>
+        <member name="T:CoreSystem.ValueTypeExtension.StringExtension">
+            <summary>
+            This class contain extension functions for string objects
+            </summary>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.In(System.String,System.String[])">
+            <summary>
+            Checks string object's value to array of string values
+            </summary>        
+            <param name="stringValues">Array of string values to compare</param>
+            <returns>Return true if any string value matches</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.ToEnum``1(System.String)">
+            <summary>
+            Converts string to enum object
+            </summary>
+            <typeparam name="T">Type of enum</typeparam>
+            <param name="value">String value to convert</param>
+            <returns>Returns enum object</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Right(System.String,System.Int32)">
+            <summary>
+            Returns characters from right of specified length
+            </summary>
+            <param name="value">String value</param>
+            <param name="length">Max number of charaters to return</param>
+            <returns>Returns string from right</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Left(System.String,System.Int32)">
+            <summary>
+            Returns characters from left of specified length
+            </summary>
+            <param name="value">String value</param>
+            <param name="length">Max number of charaters to return</param>
+            <returns>Returns string from left</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Format(System.String,System.Object)">
+            <summary>
+             Replaces the format item in a specified System.String with the text equivalent
+             of the value of a specified System.Object instance.
+            </summary>
+            <param name="value">A composite format string</param>
+            <param name="arg0">An System.Object to format</param>
+            <returns>A copy of format in which the first format item has been replaced by the
+            System.String equivalent of arg0</returns>
+        </member>
+        <member name="M:CoreSystem.ValueTypeExtension.StringExtension.Format(System.String,System.Object[])">
+            <summary>
+             Replaces the format item in a specified System.String with the text equivalent
+             of the value of a specified System.Object instance.
+            </summary>
+            <param name="value">A composite format string</param>
+            <param name="args">An System.Object array containing zero or more objects to format.</param>
+            <returns>A copy of format in which the format items have been replaced by the System.String
+            equivalent of the corresponding instances of System.Object in args.</returns>
+        </member>
         <member name="T:CoreSystem.Data.DbProviderType">
             <summary>
             DBMS provider enumeration
             </summary>
-        </member>
-        <member name="T:CoreSystem.Collections.DispatchedObservableCollection`1">
-            <summary>
-            This class is the replacement of WPF ObservableCollection class to support asyncrhonous updates for data binding scenarios
-            </summary>
-            <typeparam name="Titem">Type of object it will hold</typeparam>
-            <remarks>
-            It allows to be updated asynchronously from other threads without reaising exception
-            </remarks>
-            <see cref="!:ObservableCollection"/>
         </member>
     </members>
 </doc>
