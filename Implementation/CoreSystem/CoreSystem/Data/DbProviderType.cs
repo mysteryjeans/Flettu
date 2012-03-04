@@ -12,6 +12,7 @@ namespace CoreSystem.Data
         SqlServer = 2,
         SqlServerCe = 3,
         SQLite = 4,
-        MySql = 5
+        MySql = 5,
+        PostgreSQL = 6
     }
 }
