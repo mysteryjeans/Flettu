@@ -61,6 +61,9 @@ namespace CoreSystem.Data
             if (string.Compare(provider, "MySql.Data.MySqlClient", true) == 0)
                 return DbProviderType.MySql;
 
+            if (string.Compare(provider, "Npgsql", true) == 0)
+                return DbProviderType.PostgreSQL;
+
             return DbProviderType.UnSupported;
         }
 
@@ -600,41 +603,16 @@ namespace CoreSystem.Data
         /// <summary>
         /// Executes query string and return scalar value
         /// </summary>
-        /// <param name="cmdText">SQL query string</param>
+        /// <param name="cmdText">SQL query strign</param>
         /// <returns>Scalar value</returns>
         public object ExecuteScalar(string cmdText)
         {
             using (DbConnection conn = this.CreateConnection())
             {
-                return this.ExecuteScalar(cmdText, conn);
-            }
-        }
-
-        /// <summary>
-        /// Executes query string in specified connection and return scalar value
-        /// </summary>
-        /// <param name="cmdText">SQL query string</param>
-        /// <param name="conn">Database connection</param>
-        /// <returns>Scalar value</returns>
-        public object ExecuteScalar(string cmdText, DbConnection conn)
-        {
-            using (DbCommand cmd = this.CreateCommand(cmdText, conn))
-            {
-                return cmd.ExecuteScalar();
-            }
-        }
-
-        /// <summary>
-        /// Executes query string in specified transaction and return scalar value
-        /// </summary>
-        /// <param name="cmdText">SQL query string</param>
-        /// <param name="conn">Database transaction</param>
-        /// <returns>Scalar value</returns>
-        public object ExecuteScalar(string cmdText, DbTransaction trans)
-        {
-            using (DbCommand cmd = this.CreateCommand(cmdText, trans))
-            {
-                return cmd.ExecuteScalar();
+                using (DbCommand cmd = this.CreateCommand(cmdText, conn))
+                {
+                    return cmd.ExecuteScalar();
+                }
             }
         }
 
