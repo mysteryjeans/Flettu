@@ -101,6 +101,8 @@
     <Compile Include="Data\DbDataException.cs" />
     <Compile Include="Data\DbFactory.cs" />
     <Compile Include="Data\DbProviderType.cs" />
+    <Compile Include="Lock\SyncLock.cs" />
+    <Compile Include="Lock\SyncValue.cs" />
     <Compile Include="RefTypeExtension\CollectionExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefTypeExtension\ExceptionExtesion.cs" />
