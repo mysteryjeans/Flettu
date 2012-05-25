@@ -391,6 +391,13 @@
             <param name="transaction">Database transaction</param>
             <returns>Result in a new DataTable</returns>
         </member>
+        <member name="M:CoreSystem.Data.Database.ExecuteQuery(System.Data.Common.DbCommand)">
+            <summary>
+            Execute query string
+            </summary>
+            <param name="command">Database command object</param>
+            <returns>Result in a new DataTable</returns>
+        </member>
         <member name="M:CoreSystem.Data.Database.ExecuteDataSet(System.String)">
             <summary>
             Executes query string
