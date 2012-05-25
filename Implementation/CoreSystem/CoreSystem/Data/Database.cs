@@ -347,14 +347,9 @@ namespace CoreSystem.Data
         /// <returns>Result in a new DataTable</returns>
         public DataTable ExecuteQuery(string cmdText, DbConnection connection)
         {
-            using (DbCommand cmd = this.CreateCommand(cmdText, connection, CommandType.Text))
+            using (DbCommand command = this.CreateCommand(cmdText, connection, CommandType.Text))
             {
-                DbDataAdapter adapter = this.dbProvider.CreateDataAdapter();
-                adapter.SelectCommand = cmd;
-                DataTable retVal = new DataTable();
-
-                adapter.Fill(retVal);
-                return retVal;
+                return this.ExecuteQuery(command);
             }
         }
 
@@ -366,15 +361,25 @@ namespace CoreSystem.Data
         /// <returns>Result in a new DataTable</returns>
         public DataTable ExecuteQuery(string cmdText, DbTransaction transaction)
         {
-            using (DbCommand cmd = this.CreateCommand(cmdText, transaction, CommandType.Text))
+            using (DbCommand command = this.CreateCommand(cmdText, transaction, CommandType.Text))
             {
-                DbDataAdapter adapter = this.dbProvider.CreateDataAdapter();
-                adapter.SelectCommand = cmd;
-                DataTable retVal = new DataTable();
-
-                adapter.Fill(retVal);
-                return retVal;
+                return this.ExecuteQuery(command);
             }
+        }
+
+        /// <summary>
+        /// Execute query string
+        /// </summary>
+        /// <param name="command">Database command object</param>
+        /// <returns>Result in a new DataTable</returns>
+        public DataTable ExecuteQuery(DbCommand command)
+        {
+            DbDataAdapter adapter = this.dbProvider.CreateDataAdapter();
+            adapter.SelectCommand = command;
+            DataTable retVal = new DataTable();
+
+            adapter.Fill(retVal);
+            return retVal;
         }
 
         /// <summary>

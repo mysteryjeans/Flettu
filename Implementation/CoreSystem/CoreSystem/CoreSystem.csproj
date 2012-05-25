@@ -18,14 +18,10 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -50,7 +46,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\CoreSystem.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\Documentation\Help\Html\CoreSystem.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -101,12 +97,12 @@
     <Compile Include="Data\DbDataException.cs" />
     <Compile Include="Data\DbFactory.cs" />
     <Compile Include="Data\DbProviderType.cs" />
-    <Compile Include="Lock\SyncLock.cs" />
     <Compile Include="Lock\SyncValue.cs" />
     <Compile Include="RefTypeExtension\CollectionExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefTypeExtension\ExceptionExtesion.cs" />
     <Compile Include="RefTypeExtension\IEnumerableExtension.cs" />
+    <Compile Include="Lock\SyncLock.cs" />
     <Compile Include="Util\Guard.cs" />
     <Compile Include="ValueTypeExtension\CharExtension.cs" />
     <Compile Include="ValueTypeExtension\DataTimeExtension.cs" />
@@ -135,6 +131,7 @@
     <Compile Include="Data\IRepository.cs" />
     <Compile Include="Data\LinqToSqlRepository.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
