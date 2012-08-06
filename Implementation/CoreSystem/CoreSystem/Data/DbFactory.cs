@@ -46,7 +46,7 @@ namespace CoreSystem.Data
                 }
 
                 if (defaultDb == null && databaseList.Count != 0)
-                    defaultDb = databaseList[0];
+                    defaultDb = databaseList[0];                
             }
         }
 
@@ -61,6 +61,9 @@ namespace CoreSystem.Data
         /// <see cref="Database"/>
         public static Database GetDefaultDatabase()
         {
+            if (defaultDb == null)
+                throw new InvalidOperationException("There are no connection strings defined in configuration, please make sure that connection string(s) must have their provider name defined");
+
             return defaultDb;
         }
 
