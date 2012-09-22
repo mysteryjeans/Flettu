@@ -5,6 +5,8 @@ using System.Globalization;
 using System.Configuration;
 using System.Data.SqlClient;
 using CoreSystem.Crypto;
+using CoreSystem.Dynamic;
+using System.Collections.Generic;
 
 
 namespace CoreSystem.Data
@@ -289,6 +291,8 @@ namespace CoreSystem.Data
             }
         }
 
+        #region DbDataReader
+
         /// <summary>
         /// Executes query in transaction
         /// </summary>
@@ -339,6 +343,10 @@ namespace CoreSystem.Data
             return this.ExecuteReader(cmdText, this.CreateConnection(), CommandBehavior.CloseConnection);
         }
 
+        #endregion
+
+        #region DataTable
+
         /// <summary>
         /// Execute query string
         /// </summary>
@@ -374,13 +382,33 @@ namespace CoreSystem.Data
         /// <returns>Result in a new DataTable</returns>
         public DataTable ExecuteQuery(DbCommand command)
         {
-            DbDataAdapter adapter = this.dbProvider.CreateDataAdapter();
-            adapter.SelectCommand = command;
             DataTable retVal = new DataTable();
+            using (var reader = command.ExecuteReader())
+            {
+                retVal.Load(reader);
+            }
 
-            adapter.Fill(retVal);
             return retVal;
         }
+
+        /// <summary>
+        /// Execute query string
+        /// </summary>
+        /// <param name="cmdText">SQL query command</param>
+        /// <returns>Result in a new DataTable</returns>
+        public DataTable ExecuteQuery(string cmdText)
+        {
+            using (DbConnection connection = this.CreateConnection())
+            {
+                DataTable retVal = this.ExecuteQuery(cmdText, connection);
+                connection.Close();
+                return retVal;
+            }
+        }
+
+        #endregion
+
+        #region DataSet
 
         /// <summary>
         /// Executes query string
@@ -485,21 +513,79 @@ namespace CoreSystem.Data
             }
         }
 
+        #endregion
+
+        #region Donymous
+
         /// <summary>
         /// Execute query string
         /// </summary>
         /// <param name="cmdText">SQL query command</param>
-        /// <returns>Result in a new DataTable</returns>
-        public DataTable ExecuteQuery(string cmdText)
+        /// <param name="connection">Database connection</param>
+        /// <returns>Result in a new List of Donymous objects</returns>
+        public List<Donymous> ExecuteToDonymous(string cmdText, DbConnection connection)
         {
-            using (DbConnection connection = this.CreateConnection())
+            using (var reader = this.ExecuteReader(cmdText, connection))
             {
-                DataTable retVal = this.ExecuteQuery(cmdText, connection);
-                connection.Close();
-                return retVal;
+                return this.ExecuteToDonymous(reader);
             }
-
         }
+
+        /// <summary>
+        /// Execute query string in transaction
+        /// </summary>
+        /// <param name="cmdText">SQL query string</param>
+        /// <param name="transaction">Database transaction</param>
+        /// <returns>Result in a new List of Donymous objects</returns>
+        public List<Donymous> ExecuteToDonymous(string cmdText, DbTransaction transaction)
+        {
+            using (var reader = this.ExecuteReader(cmdText, transaction))
+            {
+                return this.ExecuteToDonymous(reader);
+            }
+        }
+
+        /// <summary>
+        /// Execute query string
+        /// </summary>
+        /// <param name="command">Database command object</param>
+        /// <returns>Result in a new List of Donymous objects</returns>
+        public List<Donymous> ExecuteToDonymous(DbCommand command)
+        {
+            using (var reader = command.ExecuteReader())
+            {
+                return this.ExecuteToDonymous(reader);
+            }
+        }
+
+        /// <summary>
+        /// Execute query string
+        /// </summary>
+        /// <param name="command">Database command object</param>
+        /// <returns>Result in a new List of Donymous objects</returns>
+        public List<Donymous> ExecuteToDonymous(DbDataReader reader)
+        {
+            var retVal = new List<Donymous>();
+            while (reader.Read())
+                retVal.Add(new Donymous(reader));
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Execute query string
+        /// </summary>
+        /// <param name="cmdText">SQL query command</param>
+        /// <returns>Result in a new List of Donymous objects</returns>
+        public List<Donymous> ExecuteToDonymous(string cmdText)
+        {
+            using (var reader = this.ExecuteReader(cmdText))
+            {
+                return this.ExecuteToDonymous(reader);
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Get table schema of specified table
