@@ -16,6 +16,18 @@ namespace CoreSystem.Dynamic
         private Dictionary<string, object> memberValues = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
+        /// List all the properties of Donymous object
+        /// </summary>
+        public IEnumerable<string> Properties
+        {
+            get
+            {
+                foreach (var name in this.memberValues.Keys)
+                    yield return name;
+            }
+        }
+
+        /// <summary>
         /// Constructor for Expandle object
         /// </summary>
         public Donymous()
