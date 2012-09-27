@@ -93,6 +93,7 @@
     <Compile Include="Crypto\Cipher.cs" />
     <Compile Include="Collections\DispatchedObservableCollection.cs" />
     <Compile Include="Collections\DispatchEvent.cs" />
+    <Compile Include="Crypto\PasswordHelper.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Data\DbConvert.cs" />
     <Compile Include="Data\DbDataException.cs" />
