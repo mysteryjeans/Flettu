@@ -5,50 +5,107 @@ using System.Text;
 using System.Security.Cryptography;
 using CoreSystem.RefTypeExtension;
 using CoreSystem.Util;
+using CoreSystem.ValueTypeExtension;
 
 namespace CoreSystem.Crypto
 {
+    /// <summary>
+    /// Algorithms for hash calculation
+    /// </summary>
+    public enum HashProvider
+    {
+        /// <summary>
+        /// 128 bits hash, possible duplication
+        /// </summary>
+        MD5,
+
+        /// <summary>
+        /// 160 bits hash intended MD5 replacement
+        /// </summary>
+        RIPEMD160,
+
+        /// <summary>
+        /// 160 bits SHA hash
+        /// </summary>
+        SHA1,
+
+        /// <summary>
+        /// 256 bits SHA hash
+        /// </summary>
+        SHA256,
+
+        /// <summary>
+        /// 384 bits SHA hash
+        /// </summary>
+        SHA384,
+
+        /// <summary>
+        /// 512 bits SHA hash
+        /// </summary>
+        SHA512
+    }
+
     /// <summary>
     /// Provide hash values to store in password, ensuring medium level security for sensitive information
     /// </summary>
     public static class PasswordHelper
     {
         private static readonly Random random = new Random((int)DateTime.Now.Ticks);
-        private static readonly MD5 hashProvider = MD5.Create();
+        private static readonly Dictionary<HashProvider, HashAlgorithm> hashProviders = new Dictionary<HashProvider, HashAlgorithm> { 
+                                                                                                                                        { HashProvider.MD5, MD5.Create()},
+                                                                                                                                        { HashProvider.RIPEMD160, RIPEMD160.Create()},
+                                                                                                                                        { HashProvider.SHA1, SHA1.Create()},
+                                                                                                                                        { HashProvider.SHA256, SHA256.Create()},
+                                                                                                                                        { HashProvider.SHA384, SHA384.Create()},
+                                                                                                                                        { HashProvider.SHA512, SHA512.Create()},
+                                                                                                                                    };
 
         /// <summary>
         /// Generate random hash value to store against password
         /// </summary>
         /// <param name="password">String to encrypt</param>
-        /// <param name="salt">Random string to salt computed hash</param>
-        /// <returns>Hash value for the password with the addition of salt</returns>
-        public static string GenerateHash(string password, string salt = null)
+        /// <param name="salt">Random string to salt computed hash, automatically generated if empty</param>
+        /// <param name="provider">Hash algorithm to use for computing hash value</param>
+        /// <returns>Hash value for the password with the addition of salt 'MD5$Salt$Hash'</returns>
+        public static string GenerateHash(string password, string salt = null, HashProvider provider = HashProvider.MD5)
         {
             Guard.CheckNullOrTrimEmpty(password, "Password cannot be empty");
 
             salt = salt ?? GenerateSalt();
 
             var bytes = Encoding.Unicode.GetBytes(salt + password);
-            var hash = hashProvider.ComputeHash(bytes);
-
-            return salt + "$" + hash.ToHexString();
+            try
+            {
+                var hash = hashProviders[provider].ComputeHash(bytes);
+                return provider + "$" + salt + "$" + hash.ToHexString();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new NotSupportedException(string.Format("Hash Provider '{0}' is not supported", provider), ex);
+            }
         }
 
         /// <summary>
         /// Validate password is equal to hashValue(Generated from Compute hash)
         /// </summary>
-        /// <param name="hashValue">Computed hash value of actual password</param>
+        /// <param name="hashValue">Computed hash value of actual password 'MD5$Salt$Hash'</param>
         /// <param name="password">Password to validate against hash value</param>
         /// <returns>True if password is equal to the hash value</returns>
         public static bool Validate(string hashValue, string password)
         {
             Guard.CheckNullOrTrimEmpty(hashValue, "HashValue cannot be empty");
-            
-            if (!hashValue.Contains('$'))
-                throw new ArgumentException("hashValue should contain salt seperated by '$'");
 
-            var salt = hashValue.Split('$')[0];
-            return hashValue == GenerateHash(password, salt);
+            var hashParts = hashValue.Split('$');
+            if (hashValue.Length != 3)
+                throw new ArgumentException("hashValue is not valid, contain hash algorithm, salt and hash value seperated by '$'");
+
+            HashProvider provider;
+            var salt = hashParts[1];
+
+            try { provider = hashParts[0].ToEnum<HashProvider>(); }
+            catch (Exception ex) { throw new ArgumentException(string.Format("Invalid Hash Provider '{0}'", hashValue[0]), ex); }
+
+            return hashValue == GenerateHash(password, salt, provider);
         }
 
         /// <summary>
@@ -56,9 +113,9 @@ namespace CoreSystem.Crypto
         /// </summary>
         /// <param name="length">Length of salt value should be even</param>
         /// <returns>Salt value</returns>
-        public static string GenerateSalt(int length=8)
+        public static string GenerateSalt(int length = 8)
         {
-            var salt = new byte[length/2];
+            var salt = new byte[length / 2];
             random.NextBytes(salt);
 
             return salt.ToHexString();
