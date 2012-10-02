@@ -23,22 +23,22 @@ namespace CoreSystem.ValueTypeExtension
         }
 
         /// <summary>
-        /// Time passed since specified value in user friendly string
+        /// Time passed since specified value in user friendly string e.g '3 mins ago'
         /// </summary>
         /// <param name="dateTime">Value to convert in user friendly string</param>
-        /// <returns>User friendly datetime string</returns>
-        public static string ToFriendlyDate(this DateTime dateTime)
+        /// <returns>User friendly datetime string e.g '3 mins ago'</returns>
+        public static string When(this DateTime dateTime)
         {
-            return dateTime.ToFriendlyDate(DateTime.Now);
+            return dateTime.When(DateTime.Now);
         }
 
         /// <summary>
-        /// Time passed since specified value in user friendly string
+        /// Time passed since specified value in user friendly string e.g '3 days ago'
         /// </summary>
         /// <param name="dateTime">Value to convert in user friendly string</param>
         /// <param name="currentTime">Value to take reference as current time when converting to user friendly string</param>
-        /// <returns>User friendly datetime string</returns>
-        public static string ToFriendlyDate(this DateTime dateTime, DateTime currentTime)
+        /// <returns>User friendly datetime string e.g '3 days ago'</returns>
+        public static string When(this DateTime dateTime, DateTime currentTime)
         {
             var timespan = currentTime - dateTime;
 
