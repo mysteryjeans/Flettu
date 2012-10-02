@@ -96,8 +96,8 @@ namespace CoreSystem.Crypto
             Guard.CheckNullOrTrimEmpty(hashValue, "HashValue cannot be empty");
 
             var hashParts = hashValue.Split('$');
-            if (hashValue.Length != 3)
-                throw new ArgumentException("hashValue is not valid, contain hash algorithm, salt and hash value seperated by '$'");
+            if (hashParts.Length != 3)
+                throw new ArgumentException("hashValue is not valid, it should contain hash algorithm, salt and hash value seperated by '$' e.g 'MD5$F8F25518$23C1916FF7C0A35166BEBCE564D19586'");
 
             HashProvider provider;
             var salt = hashParts[1];
