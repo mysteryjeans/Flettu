@@ -15,7 +15,7 @@
     <RootNamespace>Documentation</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <OutputPath>..\..\..\Documentation\Help\Chm\</OutputPath>
+    <OutputPath>Help\</OutputPath>
     <HtmlHelpName>CoreSystem</HtmlHelpName>
     <PresentationStyle>Prototype</PresentationStyle>
     <HelpTitle>A CoreSystem Documented Class Library</HelpTitle>
@@ -32,7 +32,13 @@
     </NamespaceSummaries>
     <KeepLogFile>False</KeepLogFile>
     <HelpFileVersion>1.3.0.0</HelpFileVersion>
-    <HelpFileFormat>HtmlHelp1, MSHelp2, MSHelpViewer, Website</HelpFileFormat>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
+    <BuildAssemblerVerbosity>AllMessages</BuildAssemblerVerbosity>
+    <IndentHtml>False</IndentHtml>
+    <FrameworkVersion>.NET 4.0.30319</FrameworkVersion>
+    <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <CleanIntermediates>True</CleanIntermediates>
   </PropertyGroup>
   <!-- There are no properties for these two groups but they need to appear in
        order for Visual Studio to perform the build. -->
