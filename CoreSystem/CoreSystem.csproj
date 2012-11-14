@@ -107,6 +107,7 @@
     <Compile Include="Dynamic\Donymous.cs" />
     <Compile Include="RefTypeExtension\ObjectExtension.cs" />
     <Compile Include="Util\Guard.cs" />
+    <Compile Include="Util\GunZip.cs" />
     <Compile Include="ValueTypeExtension\CharExtension.cs" />
     <Compile Include="ValueTypeExtension\DataTimeExtension.cs" />
     <Compile Include="ValueTypeExtension\EnumExtentsion.cs" />
