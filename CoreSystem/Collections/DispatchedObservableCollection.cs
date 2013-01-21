@@ -31,7 +31,7 @@ namespace CoreSystem.Collections
     /// <remarks>
     /// It allows to be updated asynchronously from other threads without reaising exception
     /// </remarks>
-    /// <see cref="ObservableCollection"/>
+    /// <see cref="System.Collections.ObjectModel.ObservableCollection"/>
     public class DispatchedObservableCollection<Titem> : ObservableCollection<Titem>
     {
         DispatchEvent collectionChanged = new DispatchEvent();
