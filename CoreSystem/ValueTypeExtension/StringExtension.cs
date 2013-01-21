@@ -17,6 +17,8 @@
 /*/
 
 
+using System;
+using System.Globalization;
 namespace CoreSystem.ValueTypeExtension
 {
     /// <summary>
@@ -95,6 +97,23 @@ namespace CoreSystem.ValueTypeExtension
         public static string Format(this string value, params object[] args)
         {
             return string.Format(value, args);
+        }
+
+        /// <summary>
+        /// Convert hex String to bytes representation
+        /// </summary>
+        /// <param name="hexString">Hex string to convert into bytes</param>
+        /// <returns>Bytes of hex string</returns>
+        public static byte[] HexToBytes(this string hexString)
+        {
+            if (hexString.Length % 2 != 0)
+                throw new ArgumentException(string.Format("HexString cannot be in odd number: {0}", hexString));
+
+            var retVal = new byte[hexString.Length / 2];
+            for (int i = 0; i < hexString.Length; i += 2)
+                retVal[i / 2] = byte.Parse(hexString.Substring(i, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+
+            return retVal;
         }
     }
 }
