@@ -19,7 +19,7 @@ namespace CoreSystem.Lock
 		private readonly Dictionary<string, object> syncObjects;
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CoreSystem.SyncString"/> class.
+		/// Initializes a new instance of the <see cref="CoreSystem.Lock.SyncString"/> class.
 		/// </summary>
 		/// <param name='inSensitive'>If false string comparasion will be case sensitive</param>
 		public SyncString (bool inSensitive=true)
