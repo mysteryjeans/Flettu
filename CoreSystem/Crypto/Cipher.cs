@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
+using CoreSystem.RefTypeExtension;
+using CoreSystem.ValueTypeExtension;
 
 namespace CoreSystem.Crypto
 {
@@ -37,36 +39,60 @@ namespace CoreSystem.Crypto
         }
 
         /// <summary>
-        /// Encrypt clear string
+        /// Encrypt clear string and returns hex string representation
         /// </summary>
         /// <param name="clearString">Text to encrypt</param>
-        /// <returns>Encrypted text</returns>
-        public string Encrypt(string clearString)
+        /// <param name="useSalt">Use random initialization vector for encryption</param>
+        /// <returns>Hex representation of encrypted value</returns>
+        public string Encrypt(string clearString, bool useSalt = false)
         {
-            byte[] inputArray = UTF8Encoding.UTF8.GetBytes(clearString);
-            
+            byte[] clearBytes = UTF8Encoding.Unicode.GetBytes(clearString);
+
+            if (useSalt)
+            {
+                var salt = PasswordHelper.GenerateSalt();
+                using (ICryptoTransform cTransform = tripleDES.CreateEncryptor(tripleDES.Key, salt.HexToBytes()))
+                {
+                    byte[] resultArray = cTransform.TransformFinalBlock(clearBytes, 0, clearBytes.Length);
+                    return salt + "$" + resultArray.ToHexString();
+                }
+            }
+
             using (ICryptoTransform cTransform = tripleDES.CreateEncryptor())
             {
-                byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
-                tripleDES.Clear();
-                return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+                byte[] resultArray = cTransform.TransformFinalBlock(clearBytes, 0, clearBytes.Length);
+                return resultArray.ToHexString();
             }
         }
 
         /// <summary>
         /// Decrypt encrypted string
         /// </summary>
-        /// <param name="encString">Encrypted string</param>
+        /// <param name="encString">Hex representation of encrypted value</param>
         /// <returns>Clear/descrypted string</returns>
         public string Decrypt(string encString)
         {
-            byte[] inputArray = Convert.FromBase64String(encString);
-            
+            byte[] encBytes;
+
+            if (encString.Contains('$'))
+            {
+                var parts = encString.Split('$');
+                byte[] salt = parts[0].HexToBytes();
+                encBytes = parts[1].HexToBytes();
+
+                using (ICryptoTransform cTransform = tripleDES.CreateDecryptor(tripleDES.Key, salt))
+                {
+                    byte[] resultArray = cTransform.TransformFinalBlock(encBytes, 0, encBytes.Length);
+                    return UTF8Encoding.Unicode.GetString(resultArray);
+                }
+            }
+
+            encBytes = encString.HexToBytes();
+
             using (ICryptoTransform cTransform = tripleDES.CreateDecryptor())
             {
-                byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
-                tripleDES.Clear();
-                return UTF8Encoding.UTF8.GetString(resultArray);
+                byte[] resultArray = cTransform.TransformFinalBlock(encBytes, 0, encBytes.Length);
+                return UTF8Encoding.Unicode.GetString(resultArray);
             }
         }
     }

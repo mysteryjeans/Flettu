@@ -111,11 +111,11 @@ namespace CoreSystem.Crypto
         /// <summary>
         /// Random salt to comsume in hash generation
         /// </summary>
-        /// <param name="length">Length of salt value should be even</param>
-        /// <returns>Salt value</returns>
-        public static string GenerateSalt(int length = 8)
+        /// <param name="length">Length of salt value should be even, hex string will be twice of the length</param>
+        /// <returns>Hex string representation of salt value</returns>
+        public static string GenerateSalt(int length = 4)
         {
-            var salt = new byte[length / 2];
+            var salt = new byte[length];
             random.NextBytes(salt);
 
             return salt.ToHexString();
