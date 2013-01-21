@@ -54,5 +54,29 @@ namespace CoreSystem.Util
             if (string.IsNullOrWhiteSpace(parameter))
                 throw new ArgumentException(message);
         }
+
+        /// <summary>
+        /// Throws ArgumentNullException for null parameter
+        /// </summary>
+        /// <param name="parameter">Value to check against</param>
+        /// <param name="message">Exception message</param>
+        public static void CheckNull(object[] parameter, string message)
+        {
+            if (parameter == null)
+                throw new ArgumentNullException(message);
+        }
+
+        /// <summary>
+        /// First check for Null and throws ArgumentNullException otherwise throws ArgumentException for empty array
+        /// </summary>
+        /// <param name="parameter">Value to check against</param>
+        /// <param name="message">Exception message</param>
+        public static void CheckNullOrEmpty(object[] parameter, string message)
+        {
+            Guard.CheckNull(parameter, message);
+
+            if (parameter.Length == 0)
+                throw new ArgumentException(message);
+        }
     }
 }
