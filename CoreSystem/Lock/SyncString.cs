@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CoreSystem
+namespace CoreSystem.Lock
 {
 	 /// <summary>
     /// Unique object for string value
