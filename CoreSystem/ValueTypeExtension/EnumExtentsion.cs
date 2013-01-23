@@ -14,6 +14,7 @@
  */
 
 using System;
+using System.Linq;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -35,6 +36,17 @@ namespace CoreSystem.ValueTypeExtension
             DescriptionAttribute[] descriptions = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
 
             return (descriptions != null && descriptions.Length > 0) ? descriptions[0].Description : fi.Name;
+        }
+
+        /// <summary>
+        /// Returns true if enum matches any of the given values
+        /// </summary>
+        /// <param name="value">Value to match</param>
+        /// <param name="values">Values to match against</param>
+        /// <returns>Return true if matched</returns>
+        public static bool In(this Enum value, params Enum[] values)
+        {
+            return values.Any(v => v == value);
         }
     }
 }
