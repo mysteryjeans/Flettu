@@ -1,0 +1,4 @@
+*.suo
+*.userprefs
+CoreSystem/bin
+CoreSystem/obj
