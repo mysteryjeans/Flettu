@@ -56,11 +56,11 @@ namespace CoreSystem.Util
         }
 
         /// <summary>
-        /// Throws ArgumentNullException for null parameter
+        /// Throws ArgumentNullException for null array
         /// </summary>
         /// <param name="parameter">Value to check against</param>
         /// <param name="message">Exception message</param>
-        public static void CheckNull(object[] parameter, string message)
+        public static void CheckNull(Array parameter, string message)
         {
             if (parameter == null)
                 throw new ArgumentNullException(message);
@@ -71,7 +71,7 @@ namespace CoreSystem.Util
         /// </summary>
         /// <param name="parameter">Value to check against</param>
         /// <param name="message">Exception message</param>
-        public static void CheckNullOrEmpty(object[] parameter, string message)
+        public static void CheckNullOrEmpty(Array parameter, string message)
         {
             Guard.CheckNull(parameter, message);
 
