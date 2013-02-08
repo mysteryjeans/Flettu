@@ -49,7 +49,7 @@ namespace CoreSystem.Dynamic
         /// <param name="obj">Object from which to load all public property values</param>
         public Donymous(object obj)
         {
-            foreach (var property in obj.GetType().GetProperties(BindingFlags.Public))
+            foreach (var property in obj.GetType().GetProperties().Where(p => p.CanRead))
                 this.memberValues[property.Name] = property.GetValue(obj, null);
         }
 
