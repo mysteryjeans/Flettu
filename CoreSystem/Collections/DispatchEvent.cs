@@ -21,6 +21,7 @@ using System.Threading;
 using System.Reflection;
 using System.Windows;
 using System.Collections;
+using System.ComponentModel;
 
 namespace CoreSystem.Collections
 {
@@ -219,39 +220,23 @@ namespace CoreSystem.Collections
                 object target = this.Target;
                 Dispatcher dispatcher = this.Dispatcher;
 
-                //if (currentDispatcher.Equals(dispatcher))
-                //{
-                //    this.handlerInfo.Invoke(target, new object[] { sender, args });
-                //}
-                //// Invoking if it is still alive
-                //else 
-                if (this.NotDisposable)
+                if (currentDispatcher.Equals(dispatcher))
+                {
+                    this.handlerInfo.Invoke(target, new object[] { sender, args });
+                }
+                else if (this.NotDisposable)
                 {
                     // if subscriber is derive from DispatcherObject class
                     // than leaving method call to be executed when thread got alive again
-                    if (target is DispatcherObject || target is System.Windows.Forms.Control)
+                    if (target is DispatcherObject || target is System.Windows.Forms.Control || target is ICollectionView)
                     {
+                        // Only handles for UI controls should be called in thread own thread
+                        // otherwise non-UI threads may be in lock wait state
                         dispatcher.BeginInvoke(DispatcherPriority.Send, new EventHandler(delegate(object sender2, EventArgs e)
                                                                                          {
                                                                                              this.handlerInfo.Invoke(target, new object[] { sender2, e });
                                                                                          }), sender, args);
                     }
-                    // Invoking handler in the same thread from which it was registered
-                    //else if (this.IsDispatcherThreadAlive)
-                    //    {
-                    //        //dispatcher.Invoke(new EventHandler(delegate(object sender2, EventArgs e)
-                    //        //                                   {
-                    //        //                                       this.handlerInfo.Invoke(target, new object[] { sender2, e });
-                    //        //                                   }), INVOKE_TIMEOUT, sender, args);
-
-                    //        dispatcher.Invoke(DispatcherPriority.Send, new EventHandler(delegate(object sender2, EventArgs e)
-                    //        {
-                    //            this.handlerInfo.Invoke(target, new object[] { sender2, e });
-                    //        }), sender, args);
-
-                    //    }
-                    // if subscriber is not derive from DispatcherObject class
-                    // than invoking method(handler) in current thread (The thread that reaise this event)
                     else
                     {
                         this.handlerInfo.Invoke(target, new object[] { sender, args });
