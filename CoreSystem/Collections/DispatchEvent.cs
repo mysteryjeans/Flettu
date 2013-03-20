@@ -219,29 +219,25 @@ namespace CoreSystem.Collections
                 // Obtaining strong refereces
                 object target = this.Target;
                 Dispatcher dispatcher = this.Dispatcher;
-
+                
                 if (currentDispatcher.Equals(dispatcher))
                 {
+                    // Handlers is subscribed in current thread
                     this.handlerInfo.Invoke(target, new object[] { sender, args });
                 }
-                else if (this.NotDisposable)
+                else if (dispatcher.Thread.GetApartmentState() == ApartmentState.STA)
                 {
-                    // if subscriber is derive from DispatcherObject class
-                    // than leaving method call to be executed when thread got alive again
-                    if (target is DispatcherObject || target is System.Windows.Forms.Control || target is ICollectionView)
-                    {
-                        // Only handles for UI controls should be called in thread own thread
-                        // otherwise non-UI threads may be in lock wait state
-                        dispatcher.BeginInvoke(DispatcherPriority.Send, new EventHandler(delegate(object sender2, EventArgs e)
-                                                                                         {
-                                                                                             this.handlerInfo.Invoke(target, new object[] { sender2, e });
-                                                                                         }), sender, args);
-                    }
-                    else
-                    {
-                        this.handlerInfo.Invoke(target, new object[] { sender, args });
-                    }
+                    // Handlers is subscribed in UI thread
+                    // Only handles for UI controls should be called in thread own thread
+                    // otherwise non-UI threads may be in lock wait state
+                    dispatcher.Invoke(new Action(() => this.handlerInfo.Invoke(target, new object[] { sender, args })), null);
                 }
+                else
+                {
+                    // If thread is not marked with STA then its handlers can be called from other threads
+                    this.handlerInfo.Invoke(target, new object[] { sender, args });
+                }
+
             }
 
             public bool DelegateEquals(Delegate other)
