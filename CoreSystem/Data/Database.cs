@@ -515,7 +515,7 @@ namespace CoreSystem.Data
 
         #endregion
 
-        #region Donymous
+        #region Donymous/Dynamic
 
         /// <summary>
         /// Execute query string
@@ -523,11 +523,11 @@ namespace CoreSystem.Data
         /// <param name="cmdText">SQL query command</param>
         /// <param name="connection">Database connection</param>
         /// <returns>Result in a new List of Donymous objects</returns>
-        public List<Donymous> ExecuteToDonymous(string cmdText, DbConnection connection)
+        public List<dynamic> ExecuteToDynamic(string cmdText, DbConnection connection)
         {
             using (var reader = this.ExecuteReader(cmdText, connection))
             {
-                return this.ExecuteToDonymous(reader);
+                return this.ExecuteToDynamic(reader);
             }
         }
 
@@ -537,11 +537,11 @@ namespace CoreSystem.Data
         /// <param name="cmdText">SQL query string</param>
         /// <param name="transaction">Database transaction</param>
         /// <returns>Result in a new List of Donymous objects</returns>
-        public List<Donymous> ExecuteToDonymous(string cmdText, DbTransaction transaction)
+        public List<dynamic> ExecuteToDynamic(string cmdText, DbTransaction transaction)
         {
             using (var reader = this.ExecuteReader(cmdText, transaction))
             {
-                return this.ExecuteToDonymous(reader);
+                return this.ExecuteToDynamic(reader);
             }
         }
 
@@ -550,22 +550,22 @@ namespace CoreSystem.Data
         /// </summary>
         /// <param name="command">Database command object</param>
         /// <returns>Result in a new List of Donymous objects</returns>
-        public List<Donymous> ExecuteToDonymous(DbCommand command)
+        public List<dynamic> ExecuteToDynamic(DbCommand command)
         {
             using (var reader = command.ExecuteReader())
             {
-                return this.ExecuteToDonymous(reader);
+                return this.ExecuteToDynamic(reader);
             }
         }
 
         /// <summary>
         /// Execute query string
         /// </summary>
-        /// <param name="command">Database command object</param>
+        /// <param name="reader">DbDataReader to create Donymous object</param>
         /// <returns>Result in a new List of Donymous objects</returns>
-        public List<Donymous> ExecuteToDonymous(DbDataReader reader)
+        public List<dynamic> ExecuteToDynamic(DbDataReader reader)
         {
-            var retVal = new List<Donymous>();
+            var retVal = new List<dynamic>();
             while (reader.Read())
                 retVal.Add(new Donymous(reader));
 
@@ -577,11 +577,11 @@ namespace CoreSystem.Data
         /// </summary>
         /// <param name="cmdText">SQL query command</param>
         /// <returns>Result in a new List of Donymous objects</returns>
-        public List<Donymous> ExecuteToDonymous(string cmdText)
+        public List<dynamic> ExecuteToDynamic(string cmdText)
         {
             using (var reader = this.ExecuteReader(cmdText))
             {
-                return this.ExecuteToDonymous(reader);
+                return this.ExecuteToDynamic(reader);
             }
         }
 
