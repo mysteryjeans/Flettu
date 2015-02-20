@@ -115,10 +115,20 @@ namespace CoreSystem.Crypto
         /// <returns>Hex string representation of salt value</returns>
         public static string GenerateSalt(int length = 4)
         {
+            return GenerateSaltBytes(length).ToHexString();
+        }
+
+        /// <summary>
+        /// Random salt to comsume in hash generation
+        /// </summary>
+        /// <param name="length">Length of salt value should be even, hex string will be twice of the length</param>
+        /// <returns>bytes representation of salt value</returns>
+        public static byte[] GenerateSaltBytes(int length = 16)
+        {
             var salt = new byte[length];
             random.NextBytes(salt);
 
-            return salt.ToHexString();
+            return salt;
         }
 
         /// <summary>
