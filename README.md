@@ -32,4 +32,3 @@ Features
 
 * CoreSystem.Dynamic is contains new class to create expandable objects.
 
-Copyright (c) Faraz Masood Khan <mk.faraz@gmail.com>
