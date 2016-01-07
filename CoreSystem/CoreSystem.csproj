@@ -115,6 +115,7 @@
     <Compile Include="ValueTypeExtension\CharExtension.cs" />
     <Compile Include="ValueTypeExtension\DataTimeExtension.cs" />
     <Compile Include="ValueTypeExtension\EnumExtentsion.cs" />
+    <Compile Include="ValueTypeExtension\IntegerExtension.cs" />
     <Compile Include="ValueTypeExtension\StringExtension.cs" />
   </ItemGroup>
   <ItemGroup>
