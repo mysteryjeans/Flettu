@@ -9,51 +9,51 @@ namespace CoreSystem.Lock
     /// <summary>
     /// Synchronizer for value types
     /// </summary>
-    /// <typeparam name="K">Type of Value</typeparam>
+    /// <typeparam name="I">Type of Object ID</typeparam>
     /// <typeparam name="T">Type of Object</typeparam>
-    public class SyncObjects<K, T> where T : IDisposable, new()
+    public class SyncRepo<I, T> where T : IDisposable, new()
     {
         #region Lock Helper Classes
 
         /// <summary>
         /// Handle of object instancce 
         /// </summary>
-        public class SyncHandle : IDisposable
+        public class RepoHandle : IDisposable
         {
-            private SyncObjects<K, T> Sync { get; set; }
+            private SyncRepo<I, T> SyncRepo { get; set; }
 			
             /// <summary>
             /// Unique value to synchronize objects
             /// </summary>
-			public K Value { get; private set; }
+			public I ID { get; private set; }
 
             /// <summary>
             /// Instance of object handle refers to
             /// </summary>
             public T Object { get; private set; }
 
-            internal SyncHandle(SyncObjects<K, T> sync, T obj)
+            internal RepoHandle(SyncRepo<I, T> sync, T obj)
             {
-                this.Sync = sync;
+                this.SyncRepo = sync;
                 this.Object = obj;
             }
 
             public override string ToString()
             {
-                return string.Format("SyncHandle[Value: {0}, Object: {1}]", this.Value, this.Object);
+                return string.Format("SyncHandle[Value: {0}, Object: {1}]", this.ID, this.Object);
             }
 
             void IDisposable.Dispose()
             {
-                this.Sync.Release(this);
+                this.SyncRepo.Release(this);
             }
         }
 
         #endregion
 
-        private Dictionary<K, T> syncObjects = new Dictionary<K, T>();
+        private Dictionary<I, T> repoObjects = new Dictionary<I, T>();
 		
-		private Dictionary<T, List<SyncHandle>> syncHandles = new Dictionary<T, List<SyncHandle>>();
+		private Dictionary<T, List<RepoHandle>> repoHandles = new Dictionary<T, List<RepoHandle>>();
 
         /// <summary>
         /// Gets an exclusive object on the specified value, must be called in 'using' statement
@@ -64,42 +64,42 @@ namespace CoreSystem.Lock
         ///     ....
         /// }
         /// </example>
-        /// <param name="value">The value on which to acquire the new object.</param>
+        /// <param name="id">The value on which to acquire the new object.</param>
         /// <returns>Handle for lock object for K value</returns>
-        public SyncHandle GetHandle(K value)
+        public RepoHandle GetObject(I id)
         {
-            T syncObject;
-			SyncHandle handle;
+            T obj;
+			RepoHandle handle;
 
-            lock (this.syncObjects)
+            lock (this.repoObjects)
             {
-                if (!this.syncObjects.TryGetValue(value, out syncObject))
+                if (!this.repoObjects.TryGetValue(id, out obj))
                 {
-                    syncObject = new T();
-                    this.syncObjects.Add(value, syncObject);
-					this.syncHandles.Add(syncObject, new List<SyncHandle>());
+                    obj = new T();
+                    this.repoObjects.Add(id, obj);
+					this.repoHandles.Add(obj, new List<RepoHandle>());
                 }
 				
-				handle = new SyncHandle(this, syncObject);
-                this.syncHandles[syncObject].Add(handle);
+				handle = new RepoHandle(this, obj);
+                this.repoHandles[obj].Add(handle);
             }
 
             return handle;
         }
 
-        private void Release(SyncHandle handle)
+        private void Release(RepoHandle handle)
         {
 			bool disposeObject = false;
 			
-            lock (this.syncObjects)
+            lock (this.repoObjects)
             {
-				var handles = this.syncHandles[handle.Object];
+				var handles = this.repoHandles[handle.Object];
                 handles.Remove(handle);
 
                 if (handles.Count == 0)
 				{
-					this.syncObjects.Remove(handle.Value);
-					this.syncHandles.Remove(handle.Object);
+					this.repoObjects.Remove(handle.ID);
+					this.repoHandles.Remove(handle.Object);
 					
 					disposeObject = true;
 				}  
@@ -111,7 +111,7 @@ namespace CoreSystem.Lock
 
         public override string ToString()
         {
-            return string.Format("SyncObjects[Count: {0}]", this.syncObjects.Count);
+            return string.Format("SyncRepo[Count: {0}]", this.repoObjects.Count);
         }
     }
 }
