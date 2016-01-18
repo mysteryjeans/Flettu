@@ -20,7 +20,7 @@ namespace CoreSystem.Lock
         /// </summary>
         public class RepoHandle : IDisposable
         {
-            private SyncRepo<I, T> SyncRepo { get; set; }
+            private SyncRepo<I, T> Repo { get; set; }
 			
             /// <summary>
             /// Unique value to synchronize objects
@@ -32,20 +32,21 @@ namespace CoreSystem.Lock
             /// </summary>
             public T Object { get; private set; }
 
-            internal RepoHandle(SyncRepo<I, T> sync, T obj)
+            internal RepoHandle(I id, T obj, SyncRepo<I, T> repo)
             {
-                this.SyncRepo = sync;
+                this.ID = id;
                 this.Object = obj;
+                this.Repo = repo;
             }
 
             public override string ToString()
             {
-                return string.Format("SyncHandle[Value: {0}, Object: {1}]", this.ID, this.Object);
+                return string.Format("SyncHandle[ID: {0}, Object: {1}]", this.ID, this.Object);
             }
 
             void IDisposable.Dispose()
             {
-                this.SyncRepo.Release(this);
+                this.Repo.Release(this);
             }
         }
 
@@ -80,7 +81,7 @@ namespace CoreSystem.Lock
 					this.repoHandles.Add(obj, new List<RepoHandle>());
                 }
 				
-				handle = new RepoHandle(this, obj);
+				handle = new RepoHandle(id, obj, this);
                 this.repoHandles[obj].Add(handle);
             }
 
