@@ -13,7 +13,7 @@ namespace CoreSystem.Lock
     /// <typeparam name="TObject">Type of Object</typeparam>
     public class SyncRepo<TID, TObject>
     {
-        #region Lock Helper Classes
+        #region Dispose Helper Classes
 
         /// <summary>
         /// Handle of object instancce 
@@ -39,14 +39,17 @@ namespace CoreSystem.Lock
                 this.Repo = repo;
             }
 
+            /// <summary>
+            /// Dispose handle reference to object
+            /// </summary>
+            public void Dispose()
+            {
+                this.Repo.Release(this);
+            }
+
             public override string ToString()
             {
                 return string.Format("SyncHandle[ID: {0}, Object: {1}]", this.ID, this.Object);
-            }
-
-            void IDisposable.Dispose()
-            {
-                this.Repo.Release(this);
             }
         }
 
