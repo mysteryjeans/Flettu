@@ -67,10 +67,9 @@ namespace CoreSystem.Lock
         /// </example>
         /// <param name="id">The value on which to acquire the new object.</param>
         /// <returns>Handle for lock object for K value</returns>
-        public RepoHandle GetObject<T>(TID id)
-            where T : TObject, new()
+        public RepoHandle GetObject(TID id)
         {
-            return this.GetObject(id, () => new T());
+            return this.GetObject(id, () => Activator.CreateInstance<TObject>());
         }
 
         /// <summary>
