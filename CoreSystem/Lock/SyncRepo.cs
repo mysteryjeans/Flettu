@@ -7,7 +7,7 @@ using System.Threading;
 namespace CoreSystem.Lock
 {
     /// <summary>
-    /// Synchronizer for value types
+    /// Synchronizer object based on ID
     /// </summary>
     /// <typeparam name="TID">Type of Object ID</typeparam>
     /// <typeparam name="TObject">Type of Object</typeparam>
