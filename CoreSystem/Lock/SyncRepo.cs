@@ -9,9 +9,9 @@ namespace CoreSystem.Lock
     /// <summary>
     /// Synchronizer for value types
     /// </summary>
-    /// <typeparam name="I">Type of Object ID</typeparam>
-    /// <typeparam name="T">Type of Object</typeparam>
-    public class SyncRepo<I, T> where T : IDisposable, new()
+    /// <typeparam name="TID">Type of Object ID</typeparam>
+    /// <typeparam name="TObject">Type of Object</typeparam>
+    public class SyncRepo<TID, TObject>
     {
         #region Lock Helper Classes
 
@@ -20,19 +20,19 @@ namespace CoreSystem.Lock
         /// </summary>
         public class RepoHandle : IDisposable
         {
-            private SyncRepo<I, T> Repo { get; set; }
-			
+            private SyncRepo<TID, TObject> Repo { get; set; }
+
             /// <summary>
             /// Unique value to synchronize objects
             /// </summary>
-			public I ID { get; private set; }
+            public TID ID { get; private set; }
 
             /// <summary>
             /// Instance of object handle refers to
             /// </summary>
-            public T Object { get; private set; }
+            public TObject Object { get; private set; }
 
-            internal RepoHandle(I id, T obj, SyncRepo<I, T> repo)
+            internal RepoHandle(TID id, TObject obj, SyncRepo<TID, TObject> repo)
             {
                 this.ID = id;
                 this.Object = obj;
@@ -52,9 +52,9 @@ namespace CoreSystem.Lock
 
         #endregion
 
-        private Dictionary<I, T> repoObjects = new Dictionary<I, T>();
-		
-		private Dictionary<T, List<RepoHandle>> repoHandles = new Dictionary<T, List<RepoHandle>>();
+        private Dictionary<TID, TObject> repoObjects = new Dictionary<TID, TObject>();
+
+        private Dictionary<TObject, List<RepoHandle>> repoHandles = new Dictionary<TObject, List<RepoHandle>>();
 
         /// <summary>
         /// Gets an exclusive object on the specified value, must be called in 'using' statement
@@ -67,21 +67,39 @@ namespace CoreSystem.Lock
         /// </example>
         /// <param name="id">The value on which to acquire the new object.</param>
         /// <returns>Handle for lock object for K value</returns>
-        public RepoHandle GetObject(I id)
+        public RepoHandle GetObject<T>(TID id)
+            where T : TObject, new()
         {
-            T obj;
-			RepoHandle handle;
+            return this.GetObject(id, () => new T());
+        }
+
+        /// <summary>
+        /// Gets an exclusive object on the specified value, must be called in 'using' statement
+        /// </summary>
+        /// <example>
+        /// Using(Sync.GetHandle(value))
+        /// {
+        ///     ....
+        /// }
+        /// </example>
+        /// <param name="id">The value on which to acquire the new object.</param>
+        /// <param name="generator">Method to create new object of T</param>
+        /// <returns>Handle for lock object for K value</returns>
+        public RepoHandle GetObject(TID id, Func<TObject> generator)
+        {
+            TObject obj;
+            RepoHandle handle;
 
             lock (this.repoObjects)
             {
                 if (!this.repoObjects.TryGetValue(id, out obj))
                 {
-                    obj = new T();
+                    obj = generator();
                     this.repoObjects.Add(id, obj);
-					this.repoHandles.Add(obj, new List<RepoHandle>());
+                    this.repoHandles.Add(obj, new List<RepoHandle>());
                 }
-				
-				handle = new RepoHandle(id, obj, this);
+
+                handle = new RepoHandle(id, obj, this);
                 this.repoHandles[obj].Add(handle);
             }
 
@@ -90,24 +108,24 @@ namespace CoreSystem.Lock
 
         private void Release(RepoHandle handle)
         {
-			bool disposeObject = false;
-			
+            IDisposable disposeObject = null;
+
             lock (this.repoObjects)
             {
-				var handles = this.repoHandles[handle.Object];
+                var handles = this.repoHandles[handle.Object];
                 handles.Remove(handle);
 
                 if (handles.Count == 0)
-				{
-					this.repoObjects.Remove(handle.ID);
-					this.repoHandles.Remove(handle.Object);
-					
-					disposeObject = true;
-				}  
+                {
+                    this.repoObjects.Remove(handle.ID);
+                    this.repoHandles.Remove(handle.Object);
+
+                    disposeObject = handle.Object as IDisposable;
+                }
             }
-			
-			if(disposeObject)
-				handle.Object.Dispose();
+
+            if (disposeObject != null)
+                disposeObject.Dispose();
         }
 
         public override string ToString()
