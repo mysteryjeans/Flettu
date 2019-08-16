@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using CoreSystem.RefTypeExtension;
 using CoreSystem.Util;
 using CoreSystem.ValueTypeExtension;
 
-namespace CoreSystem.Crypto
+namespace CoreSystem.Security
 {
     /// <summary>
     /// Algorithms for hash calculation
@@ -53,7 +52,7 @@ namespace CoreSystem.Crypto
         private static readonly Random random = new Random((int)DateTime.Now.Ticks);
         private static readonly Dictionary<HashProvider, HashAlgorithm> hashProviders = new Dictionary<HashProvider, HashAlgorithm> { 
                                                                                                                                         { HashProvider.MD5, MD5.Create()},
-                                                                                                                                        { HashProvider.RIPEMD160, RIPEMD160.Create()},
+//                                                                                                                                        { HashProvider.RIPEMD160, RIPEMD160.Create()},
                                                                                                                                         { HashProvider.SHA1, SHA1.Create()},
                                                                                                                                         { HashProvider.SHA256, SHA256.Create()},
                                                                                                                                         { HashProvider.SHA384, SHA384.Create()},

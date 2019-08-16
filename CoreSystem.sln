@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreSystem", "CoreSystem\CoreSystem.csproj", "{FBBFE4AC-73C2-47CB-8925-858501D1AE8F}"
 EndProject
-Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "CoreSystem.Help", "CoreSystem.Help\CoreSystem.Help.shfbproj", "{B3A44703-9807-4C75-B4FF-488F996FECCF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{06E00820-B0E2-478E-A9CD-FD99D40CDA95}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
