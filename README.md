@@ -16,3 +16,21 @@ Features
 * Flettu.Extensions: Difference extension methods for primitive types like string, integer, IEnumerable
 * Flettu.Util: Helper methods to check for empty values 
 
+
+### Async/Await Lock Example ###
+``` csharp
+private static async Task CheckAsyncLockReentranceAsnyc(AsyncLock asyncLock, int maxReentrances = 2)
+{
+    // Locks are IDisposable to support fimilar construct lock(){...}
+    using (await asyncLock.AcquireAsync())
+    {
+        Console.WriteLine($"Lock taken as reentrance: {maxReentrances}.. TaskId: {asyncLock.TaskId}");
+
+        if (maxReentrances > 0)
+            await CheckAsyncLockReentranceAsnyc(asyncLock, maxReentrances - 1);
+
+        Console.WriteLine($"Press any key to release reentrance: {maxReentrances} lock... TaskId: {asyncLock.TaskId}");
+        Console.ReadKey();
+    }
+}
+```
