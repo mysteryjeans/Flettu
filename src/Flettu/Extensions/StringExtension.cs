@@ -1,25 +1,7 @@
-    /*/
- *
- * Author: Faraz Masood Khan
- * 
- * Date: Friday, August 29, 2008 1:52 AM
- * 
- * Class: StringExtension
- * 
- * Email: mk.faraz@gmail.com
- * 
- * Blogs: http://farazmasoodkhan.wordpress.com
- *
- * Website: http://www.linkedin.com/in/farazmasoodkhan
- *
- * Copyright: Faraz Masood Khan @ Copyright ©  2008
- *
-/*/
-
-
 using System;
 using System.Globalization;
-namespace Flettu.ValueTypeExtension
+
+namespace Flettu.Extensions
 {
     /// <summary>
     /// This class contain extension functions for string objects

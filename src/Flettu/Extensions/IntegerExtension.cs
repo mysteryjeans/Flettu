@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Flettu.ValueTypeExtension
+namespace Flettu.Extensions
 {
     /// <summary>
     /// Extension methods for integers

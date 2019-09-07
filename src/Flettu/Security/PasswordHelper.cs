@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
-using Flettu.RefTypeExtension;
 using Flettu.Util;
-using Flettu.ValueTypeExtension;
+using Flettu.Extensions;
 
 namespace Flettu.Security
 {

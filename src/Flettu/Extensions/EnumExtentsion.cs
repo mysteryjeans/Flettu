@@ -1,24 +1,9 @@
-﻿/*
- * Author: Faraz Masood Khan 
- * 
- * Date: 3/9/2008
- * 
- * Class: EnumExtentsion
- * 
- * Copyright: Faraz Masood Khan @ Copyright ©  2008
- * 
- * Email: mk.faraz@gmail.com
- * 
- * Blogs: http://csharplive.wordpress.com, http://farazmasoodkhan.wordpress.com
- * 
- */
-
-using System;
+﻿using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Flettu.ValueTypeExtension
+namespace Flettu.Extensions
 {
     /// <summary>
     /// This is class contains extension function(s) for enum objects
