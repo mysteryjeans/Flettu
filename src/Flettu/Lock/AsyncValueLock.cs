@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Flettu.Util;
 
 namespace Flettu.Lock
 {
@@ -80,8 +80,9 @@ namespace Flettu.Lock
         /// <returns>Handle for lock object for T value</returns>
         public Task<IDisposable> AcquireAsync(T value)
         {
-            LockObject lockObject;
+            Guard.CheckNull(value, nameof(value));
 
+            LockObject lockObject;
             lock (this.lockObjects)
             {
                 if (!this.lockObjects.TryGetValue(value, out lockObject))
