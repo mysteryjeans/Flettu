@@ -1,5 +1,5 @@
 *.suo
 *.userprefs
-CoreSystem/bin
-CoreSystem/obj
-CoreSystem.Help/Help
+bin
+obj
+.vscode
