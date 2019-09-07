@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSystem.Lock
+namespace Flettu.Lock
 {
     public class AsyncLock : IDisposable
     {

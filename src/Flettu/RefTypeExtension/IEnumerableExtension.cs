@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
-using CoreSystem.ValueTypeExtension;
+using Flettu.ValueTypeExtension;
 
-namespace CoreSystem.RefTypeExtension
+namespace Flettu.RefTypeExtension
 {
     /// <summary>
     /// Extension methods for IEnumerable<T> interface

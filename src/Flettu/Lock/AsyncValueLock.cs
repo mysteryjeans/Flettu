@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSystem.Lock
+namespace Flettu.Lock
 {
     /// <summary>
     /// Synchronizer for value base locks

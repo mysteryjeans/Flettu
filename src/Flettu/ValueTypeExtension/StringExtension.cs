@@ -19,7 +19,7 @@
 
 using System;
 using System.Globalization;
-namespace CoreSystem.ValueTypeExtension
+namespace Flettu.ValueTypeExtension
 {
     /// <summary>
     /// This class contain extension functions for string objects

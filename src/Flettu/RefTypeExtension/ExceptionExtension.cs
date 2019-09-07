@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CoreSystem.RefTypeExtension
+namespace Flettu.RefTypeExtension
 {
     public static class ExceptionExtension
     {

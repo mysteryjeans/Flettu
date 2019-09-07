@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CoreSystem.ValueTypeExtension
+namespace Flettu.ValueTypeExtension
 {
     /// <summary>
     /// Helper functions for DateTime

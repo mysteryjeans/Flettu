@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.IO.Compression;
 
-namespace CoreSystem.Util
+namespace Flettu.Util
 {
     /// <summary>
     /// Compress files into .gz extension and decompress files from .gz extension

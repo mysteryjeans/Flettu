@@ -18,7 +18,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace CoreSystem.ValueTypeExtension
+namespace Flettu.ValueTypeExtension
 {
     /// <summary>
     /// This is class contains extension function(s) for enum objects

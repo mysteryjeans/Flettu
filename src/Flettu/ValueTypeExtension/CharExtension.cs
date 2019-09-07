@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CoreSystem.RefTypeExtension;
+using Flettu.RefTypeExtension;
 
-namespace CoreSystem.ValueTypeExtension
+namespace Flettu.ValueTypeExtension
 {
     public static class CharExtension
     {

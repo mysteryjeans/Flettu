@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CoreSystem.Lock;
+using Flettu.Lock;
 
-namespace CoreSystem.Test
+namespace Flettu.Test
 {
     class Program
     {

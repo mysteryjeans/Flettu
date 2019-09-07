@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace CoreSystem.Lock
+namespace Flettu.Lock
 {
     /// <summary>
     /// Synchronizer object based on ID

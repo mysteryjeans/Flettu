@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 
-namespace CoreSystem.RefTypeExtension
+namespace Flettu.RefTypeExtension
 {
     public static class CollectionExtension
     {

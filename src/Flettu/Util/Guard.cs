@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CoreSystem.Util
+namespace Flettu.Util
 {
     public static class Guard
     {

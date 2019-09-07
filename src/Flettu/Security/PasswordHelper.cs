@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
-using CoreSystem.RefTypeExtension;
-using CoreSystem.Util;
-using CoreSystem.ValueTypeExtension;
+using Flettu.RefTypeExtension;
+using Flettu.Util;
+using Flettu.ValueTypeExtension;
 
-namespace CoreSystem.Security
+namespace Flettu.Security
 {
     /// <summary>
     /// Algorithms for hash calculation
