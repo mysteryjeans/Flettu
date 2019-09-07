@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Flettu</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Faraz M. Khan</Authors>
+    <Owners>mysteryjeans</Owners>
+    <Description>A library of core helpers, extensions, Async/Await locks on object, strings, integers</Description>
   </PropertyGroup>
 </Project>
