@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Flettu</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <title>Flettu</title>
     <authors>Faraz M. Khan</authors>
     <owners>mysteryjeans</owners>
@@ -14,7 +14,7 @@
     <copyright>Copyright 2019 Faraz M. Khan</copyright>
     <tags>Threading;Async;Await;Password</tags>
     <dependencies>
-        <dependency id="netstandard" version="2.0" />
+        <dependency id="NETStandard" version="2.0" />
     </dependencies>
   </metadata>
 </package>
