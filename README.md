@@ -2,7 +2,7 @@
 
 It contains many small pieces of codes for reducing preliminary coding overheads, such as Async/Await locks on object, ids, string.. or store password safely or reduce boiler plate code such as checking for nulls.
 
-Features
+### Features ###
 
 * Async/Await Task base locking/synchronizations on built-in value types which supports lock *reentrance* (i.e. Int32, Int64, string and etc)
 * Extension functions for value types and reference types
