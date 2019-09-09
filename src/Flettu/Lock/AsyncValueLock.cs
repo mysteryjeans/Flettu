@@ -16,12 +16,10 @@ namespace Flettu.Lock
 
         private class LockHandle : IDisposable
         {
+            private bool disposed = false;
             private Task<IDisposable> acquireLockTask = null;
-
             private IDisposable acquiredLock = null;
-
             private LockObject lockObject = null;
-
             private AsyncValueLock<T> valueLock;
 
             public LockHandle(AsyncValueLock<T> sync, LockObject lockObject)
@@ -39,8 +37,12 @@ namespace Flettu.Lock
 
             public void Dispose()
             {
-                this.acquiredLock.Dispose();
-                this.valueLock.UnLock(this.lockObject);
+                if(!this.disposed)
+                {
+                    this.disposed = true;
+                    this.acquiredLock.Dispose();
+                    this.valueLock.UnLock(this.lockObject);
+                }
             }
         }
 
