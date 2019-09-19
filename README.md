@@ -45,7 +45,7 @@ public async Task DoRecursionAsync(int maxRecursion = 2, CancellationToken cance
 }
 
 // ... Dispose pattern implemenation
-public void Dispose(bool disposing)
+protected virtual void Dispose(bool disposing)
 {
     if(!disposed)
     {
