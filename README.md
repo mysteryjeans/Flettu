@@ -16,21 +16,49 @@ It contains many small pieces of codes for reducing preliminary coding overheads
 * Flettu.Extensions: Difference extension methods for primitive types like string, integer, IEnumerable
 * Flettu.Util: Helper methods to check for empty values 
 
+### Getting Started ###
+Install it from [NuGet](https://www.nuget.org/packages/Flettu/) packages
 
 ### Async/Await Lock Example ###
 ``` csharp
-private static async Task CheckAsyncLockReentranceAsnyc(AsyncLock asyncLock, int maxReentrances = 2)
+private AsyncLock asynMutex = new AsyncLock;
+
+// Do something async..
+public async Task DoSomethingAsync(CancellationToken cancellationToken = null)
 {
-    // Locks are IDisposable to support fimilar construct lock(){...}
-    using (await asyncLock.AcquireAsync())
+    using(await asyncMutex.AcquireAsync())
     {
-        Console.WriteLine($"Lock taken as reentrance: {maxReentrances}.. TaskId: {asyncLock.TaskId}");
-
-        if (maxReentrances > 0)
-            await CheckAsyncLockReentranceAsnyc(asyncLock, maxReentrances - 1);
-
-        Console.WriteLine($"Press any key to release reentrance: {maxReentrances} lock... TaskId: {asyncLock.TaskId}");
-        Console.ReadKey();
+       await Task.Delay(10000, cancellationToken ?? CancellationToken.None);
     }
 }
+
+// Take locks recursively and allow reenterance
+public async Task DoRecursionAsync(int maxRecursion = 2, CancellationToken cancellationToken = null)
+{
+    using(await asyncMutex.AcquireAsync())
+    {
+       if(maxRecursion > 0)
+          await DoRecursionAsync(maxRecursion - 1, cancellationToken);
+          
+       await Task.Delay(10000, cancellationToken ?? CancellationToken.None);
+    }
+}
+
+// ... Dispose pattern implemenation
+public void Dispose(bool disposing)
+{
+    if(!disposed)
+    {
+        if(disposing)
+        {   
+            // .. disposing other resources here
+            this.asyncMuxtex.Dispose();
+        }
+        
+        // ..Releasing unmanage resources here if any
+        
+        disposed = true;
+    }
+}
+
 ```
