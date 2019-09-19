@@ -6,13 +6,13 @@ namespace Flettu.Lock
 {
     public class AsyncLock : IDisposable
     {
-        private static long _globalTaskCounter = 0;
-        private static readonly AsyncLocal<long> _taskId = new AsyncLocal<long>();
+        private long _taskCounter = 0;
+        private readonly AsyncLocal<long> _taskId = new AsyncLocal<long>();
 
-        private static long GetTaskId()
+        private long GetTaskId()
         {
             if (_taskId.Value == 0)
-                _taskId.Value = Interlocked.Increment(ref _globalTaskCounter);
+                _taskId.Value = Interlocked.Increment(ref _taskCounter);
 
             return _taskId.Value;
         }
@@ -77,7 +77,7 @@ namespace Flettu.Lock
 
         public Task<IDisposable> AcquireAsync(CancellationToken cancellationToken)
         {
-            var lockObject = new LockObject(this, AsyncLock.GetTaskId());
+            var lockObject = new LockObject(this, this.GetTaskId());
             return lockObject.AcquireAsync(cancellationToken);
         }
 

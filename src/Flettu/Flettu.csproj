@@ -11,5 +11,6 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/mysteryjeans/Flettu/master/LICENSE</PackageLicenseUrl>
     <Description>A library of core helpers, extensions, Async/Await locks on object, strings, integers</Description>
     <Copyright>Copyright 2019 Faraz M. Khan</Copyright>
+    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 </Project>
