@@ -24,23 +24,23 @@ Install it from [NuGet](https://www.nuget.org/packages/Flettu/) packages
 private AsyncLock asynMutex = new AsyncLock;
 
 // Do something async..
-public async Task DoSomethingAsync(CancellationToken cancellationToken = null)
+public async Task DoSomethingAsync(CancellationToken cancellationToken = default(CancellationToken))
 {
     using(await asyncMutex.AcquireAsync())
     {
-       await Task.Delay(10000, cancellationToken ?? CancellationToken.None);
+       await Task.Delay(10000, cancellationToken);
     }
 }
 
 // Take locks recursively and allow reenterance
-public async Task DoRecursionAsync(int maxRecursion = 2, CancellationToken cancellationToken = null)
+public async Task DoRecursionAsync(int maxRecursion = 2, CancellationToken cancellationToken = default(CancellationToken))
 {
     using(await asyncMutex.AcquireAsync())
     {
        if(maxRecursion > 0)
           await DoRecursionAsync(maxRecursion - 1, cancellationToken);
           
-       await Task.Delay(10000, cancellationToken ?? CancellationToken.None);
+       await Task.Delay(10000, cancellationToken);
     }
 }
 
