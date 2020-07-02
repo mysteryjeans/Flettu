@@ -15,6 +15,8 @@ It contains many small pieces of codes for reducing preliminary coding overheads
 * Flettu.Security: Store password safely as random hash value to prevent against brute force attacks, or encrypt sensitive data quickly. 
 * Flettu.Extensions: Difference extension methods for primitive types like string, integer, IEnumerable
 * Flettu.Util: Helper methods to check for empty values 
+* Flettu.Collections: Contains ConcurrentList<T> and ConcurrentHashSet<T> for maximum performance, since reads can be
+  simultaneous
 
 ### Getting Started ###
 Install it from [NuGet](https://www.nuget.org/packages/Flettu/) packages
