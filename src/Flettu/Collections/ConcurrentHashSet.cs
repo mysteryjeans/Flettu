@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace Flettu.Collections
 {
-    public class ConcurrentHashSet<T> : ISet<T>
+    public class ConcurrentHashSet<T> : ISet<T>, IDisposable
     {
         private readonly HashSet<T> _hashSet = new HashSet<T>();
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);

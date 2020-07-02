@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace Flettu.Collections
 {
-    public class ConcurrentList<T> : IList<T>
+    public class ConcurrentList<T> : IList<T>, IDisposable
     {
         private readonly List<T> _list;
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
@@ -180,5 +181,23 @@ namespace Flettu.Collections
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #region Dispose
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_lock != null)
+                    _lock.Dispose();
+            }
+        }
+
+        #endregion
     }
 }
