@@ -187,14 +187,20 @@ namespace Flettu.Collections
         public void Dispose()
         {
             Dispose(true);
+            //GC.SuppressFinalize(this);
         }
 
+        private bool _isDisposed;
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!_isDisposed)
             {
-                if (_lock != null)
+                if (disposing)
+                {
                     _lock.Dispose();
+                }
+
+                _isDisposed = true;
             }
         }
 
