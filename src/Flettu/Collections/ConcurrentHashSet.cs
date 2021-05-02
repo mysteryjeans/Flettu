@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -65,16 +66,20 @@ namespace Flettu.Collections
 
         public IEnumerator<T> GetEnumerator()
         {
-            _lock.ExitReadLock();
+            T[] result;
+
+            _lock.EnterReadLock();
             try
             {
-                foreach (var item in _hashSet)
-                    yield return item;
+                result = _hashSet.ToArray();
             }
             finally
             {
                 _lock.ExitReadLock();
             }
+
+            foreach (var item in result)
+                yield return item;
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -252,7 +257,7 @@ namespace Flettu.Collections
 
         public bool Contains(T item)
         {
-            _lock.ExitReadLock();
+            _lock.EnterReadLock();
             try
             {
                 return _hashSet.Contains(item);
