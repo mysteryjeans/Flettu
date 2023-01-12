@@ -18,7 +18,7 @@ namespace Flettu.IO
             : base() { }
 
         /// <summary>
-        /// Create a new writer from current postion of the provided stream
+        /// Create a new writer from zero postion of the provided stream
         /// </summary>
         public ConcurrentStreamWriter(Stream stream)
             : base(stream) { }
@@ -38,24 +38,7 @@ namespace Flettu.IO
         }
 
         public override void Write(byte[] buffer, int offset, int count)
-        {
-            _syncLock.Wait();
-            try
-            {
-                if (_position != _stream.Position)
-                    _stream.Position = _position;
-
-                _stream.Write(buffer, offset, count);
-                if(_position + count != _stream.Position)
-                    throw new InvalidOperationException($"Invalid underlying stream position: {_stream.Position}, it's expected to be at: {_position + count}");
-
-                _position += count;
-            }
-            finally
-            {
-                _syncLock.Release();
-            }
-        }
+            => WriteAsync(buffer, offset, count).Wait();
 
         public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using Flettu.Util;
 
 namespace Flettu.IO
 {
@@ -13,6 +14,8 @@ namespace Flettu.IO
         protected readonly Stream _stream;
         protected readonly SemaphoreSlim _syncLock;
 
+        public bool IsDisposed => _isDisposed;
+
         public override bool CanSeek => true;
 
         public override long Length => _stream.Length;
@@ -20,7 +23,15 @@ namespace Flettu.IO
         public override long Position { get => _position; set => _position = value; }
 
         private ConcurrentStreamBase(Stream stream, SemaphoreSlim syncLock, bool disposeStream, bool disposeLock)
-            => (_stream, _position, _syncLock, _disposeStream, _disposeLock) = (stream, stream.Position, syncLock, disposeStream, disposeLock);
+        {
+            Guard.CheckNull(stream, nameof(stream));
+            Guard.CheckNull(syncLock, nameof(syncLock));
+
+            _stream = stream;
+            _syncLock = syncLock;
+            _disposeStream = disposeStream;
+            _disposeLock = disposeLock;
+        }
 
         protected ConcurrentStreamBase()
             : this(new MemoryStream(), new SemaphoreSlim(1, 1), true, true) { }
@@ -55,7 +66,7 @@ namespace Flettu.IO
             if (tempPosition < 0)
                 throw new ArgumentOutOfRangeException("offset", $"Invalid offset: {offset} for seek origin: {origin}");
 
-            if (tempPosition > int.MaxValue)
+            if (tempPosition > this.Length)
                 throw new ArgumentOutOfRangeException("offset", $"Offset: {offset} exceeded maximum stream length");
 
             _position = tempPosition;

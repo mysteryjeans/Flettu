@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
+using Flettu.IO;
 using Flettu.Lock;
 
 namespace Flettu.Test
@@ -20,26 +23,98 @@ namespace Flettu.Test
             //     using(var cryptoStream = new CryptoStream(new MemoryStream(), encryptor,CryptoStreamMode.
             // }
 
-            Console.WriteLine("Creating AsyncLock object..");
-            using (var asyncLock = new AsyncLock())
+            // Console.WriteLine("Creating AsyncLock object..");
+            // using (var asyncLock = new AsyncLock())
+            // {
+            //     var checkTask1 = Task.Run(async () => await CheckAsyncLockReentranceAsync(asyncLock));
+            //     var checkTask2 = Task.Run(async () => await CheckAsyncLockReentranceAsync(asyncLock));
+
+            //     Console.WriteLine("Creating AsyncLock<string> object..");
+            //     var key1 = "Faraz";
+            //     var key2 = "Masood";
+
+            //     var asyncValueLock = new AsyncValueLock<string>();
+
+            //     var checkValueTask1 = Task.Run(async () => await CheckAsyncValueLockReentranceAsync(asyncValueLock, key1));
+            //     var checkValueTask2 = Task.Run(async () => await CheckAsyncValueLockReentranceAsync(asyncValueLock, key2));
+            //     Task.WaitAll(checkTask1, checkTask2, checkValueTask1, checkValueTask2);
+
+            //     Console.WriteLine("Press any key to stop..");
+            //     Console.ReadKey();
+
+            // }
+
+            var buffer = new byte[768];
+            using (var memoryStream = new MemoryStream())
             {
-                var checkTask1 = Task.Run(async () => await CheckAsyncLockReentranceAsync(asyncLock));
-                var checkTask2 = Task.Run(async () => await CheckAsyncLockReentranceAsync(asyncLock));
-       
-                Console.WriteLine("Creating AsyncLock<string> object..");
-                var key1 = "Faraz";
-                var key2 = "Masood";
+                int count = 0;
+                using (var writer = new ConcurrentPipeWriter(memoryStream))
+                {
+                    var readTask1 = Task.Run(async () => await ReadAllAsync(writer, 512));
+                    var readTask2 = Task.Run(async () => await ReadToCountAllAsync(writer, 1024));
 
-                var asyncValueLock = new AsyncValueLock<string>();
+                    while (count++ < 10)
+                    {
+                        writer.WriteAsync(buffer, 0, buffer.Length).Wait();
+                        Console.WriteLine($"Write index: {count}, size: {buffer.Length}, press key to proceed");
 
-                var checkValueTask1 = Task.Run(async () => await CheckAsyncValueLockReentranceAsync(asyncValueLock, key1));
-                var checkValueTask2 = Task.Run(async () => await CheckAsyncValueLockReentranceAsync(asyncValueLock, key2));
-                Task.WaitAll(checkTask1, checkTask2, checkValueTask1, checkValueTask2);
+                        //Console.ReadKey();
+                        Thread.Sleep(1000);
+                    }
 
-                Console.WriteLine("Press any key to stop..");
-                Console.ReadKey();
-
+                    // writer.EndOfStream()
+                }
             }
+
+            Console.ReadKey();
+        }
+
+        private static async Task ReadAllAsync(ConcurrentPipeWriter writer, int bufferSize)
+        {
+            var buffer = new byte[bufferSize];
+            var totalRead = 0;
+
+            Console.WriteLine($"ReadAllAsync => Started");
+            using (var memoryStream = new MemoryStream())
+            using (var reader = writer.OpenStreamReader())
+            {
+                // int readSize = 0;
+                // while ((readSize = await reader.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                // {
+                //     totalRead += readSize;
+                //     Console.WriteLine($"ReadAllAsync => Read size: {readSize}, total read size: {totalRead}, buffer length: {buffer.Length}");
+                // }
+
+                var copyTask = reader.CopyToAsync(memoryStream);
+                while (!copyTask.IsCompleted)
+                {
+                    Console.WriteLine($"Copying external stream position: {memoryStream.Position}, length: {memoryStream.Length}");
+                    await Task.Delay(500);
+                }
+
+                Console.WriteLine($"Copied size to external stream: {memoryStream.Length}");
+            }
+
+            Console.WriteLine($"ReadAllAsync => Ended");
+        }
+
+        private static async Task ReadToCountAllAsync(ConcurrentPipeWriter writer, int bufferSize)
+        {
+            var buffer = new byte[bufferSize];
+            var totalRead = 0;
+
+            Console.WriteLine($"ReadToCountAllAsync => Started");
+            using (var reader = writer.OpenStreamReader())
+            {
+                int readSize = 0;
+                while ((readSize = await reader.ReadToCountAsync(buffer, 0, buffer.Length)) != 0)
+                {
+                    totalRead += readSize;
+                    Console.WriteLine($"ReadToCountAllAsync => Read size: {readSize}, total read size: {totalRead}, buffer length: {buffer.Length}");
+                }
+            }
+
+            Console.WriteLine($"ReadToCountAllAsync => Ended");
         }
 
         private static async Task CheckAsyncLockReentranceAsync(AsyncLock asyncLock, int maxReentrances = 2)

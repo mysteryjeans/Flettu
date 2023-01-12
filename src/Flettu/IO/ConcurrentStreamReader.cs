@@ -14,11 +14,8 @@ namespace Flettu.IO
 
         public override bool CanWrite => false;
 
-        public ConcurrentStreamReader()
-            : base() { }
-
         /// <summary>
-        /// Create a new reader from current postion of the provided stream
+        /// Create a new reader from zero postion of the provided stream
         /// </summary>
         public ConcurrentStreamReader(Stream stream)
             : base(stream) { }
@@ -42,25 +39,7 @@ namespace Flettu.IO
             => throw new NotSupportedException("Write operation on stream not supported");
 
         public override int Read(byte[] buffer, int offset, int count)
-        {
-            _syncLock.Wait();
-            try
-            {
-                if (_position != _stream.Position)
-                    _stream.Position = _position;
-
-                var readSize = _stream.Read(buffer, offset, count);
-                if(_position + readSize != _stream.Position)
-                    throw new InvalidOperationException($"Invalid underlying stream position: {_stream.Position}, it's expected to be at: {_position + readSize}");
-
-                _position += readSize;
-                return readSize;
-            }
-            finally
-            {
-                _syncLock.Release();
-            }
-        }
+            => ReadAsync(buffer, offset, count).Result;
 
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
