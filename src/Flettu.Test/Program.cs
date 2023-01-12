@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Flettu.Lock;
 
 namespace Flettu.Test
 {
@@ -8,16 +9,17 @@ namespace Flettu.Test
     {
         static void Main(string[] args)
         {
- using (Rijndael rijAlg = Rijndael.Create())
-            {
-                rijAlg.Key = null;
-                rijAlg.IV = null;
+            // using (Rijndael rijAlg = Rijndael.Create())
+            // {
+            //     rijAlg.Key = null;
+            //     rijAlg.IV = null;
 
-                // Create an encryptor to perform the stream transform.
-                ICryptoTransform encryptor = rijAlg.CreateEncryptor(rijAlg.Key, rijAlg.IV);
+            //     // Create an encryptor to perform the stream transform.
+            //     ICryptoTransform encryptor = rijAlg.CreateEncryptor(rijAlg.Key, rijAlg.IV);
 
-                using(var cryptoStream = new CryptoStream(new MemoryStream(), encryptor,CryptoStreamMode.
-            }
+            //     using(var cryptoStream = new CryptoStream(new MemoryStream(), encryptor,CryptoStreamMode.
+            // }
+
             Console.WriteLine("Creating AsyncLock object..");
             using (var asyncLock = new AsyncLock())
             {

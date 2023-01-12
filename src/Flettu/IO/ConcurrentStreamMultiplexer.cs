@@ -16,13 +16,13 @@ namespace Flettu.IO
         /// <summary>
         /// Opens a new reader from current postion of underlying stream
         /// </summary>
-        public Stream OpenStreamReader(int? position = null)
+        public Stream OpenStreamReader(int position = 0)
         {
             var stream = new ConcurrentStreamReader(_stream, _syncLock);
-            if (position != null)
+            if (position != 0)
                 try
                 {
-                    stream.Seek(position.Value, SeekOrigin.Begin);
+                    stream.Seek(position, SeekOrigin.Begin);
                 }
                 catch
                 {
