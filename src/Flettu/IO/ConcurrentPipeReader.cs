@@ -45,7 +45,7 @@ namespace Flettu.IO
         /// <summary>
         /// Reads into the buffer from available bytes or stream end
         /// </summary>
-        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        public  async Task<int> ReadAvailableAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
         {
             var readSize = await base.ReadAsync(buffer, offset, count, cancellationToken);
             while (readSize == 0 && !IsEndOfStream)
@@ -60,13 +60,7 @@ namespace Flettu.IO
         /// <summary>
         /// Reads into the buffer to the desired count or stream end
         /// </summary>
-        public Task<int> ReadToCountAsync(byte[] buffer, int offset, int count)
-            => ReadToCountAsync(buffer, offset, count, CancellationToken.None);
-
-        /// <summary>
-        /// Reads into the buffer to the desired count or stream end
-        /// </summary>
-        public async Task<int> ReadToCountAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             var readSize = await base.ReadAsync(buffer, offset, count, cancellationToken);
             while (readSize < count && !IsEndOfStream)

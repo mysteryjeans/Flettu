@@ -45,13 +45,13 @@ namespace Flettu.Test
             // }
 
             var buffer = new byte[768];
-            using (var memoryStream = new MemoryStream())
+            using (var underlineStream = new MemoryStream())
             {
                 int count = 0;
-                using (var writer = new ConcurrentPipeWriter(memoryStream))
+                using (var writer = new ConcurrentPipeWriter(underlineStream))
                 {
                     var readTask1 = Task.Run(async () => await ReadAllAsync(writer, 512));
-                    var readTask2 = Task.Run(async () => await ReadToCountAllAsync(writer, 1024));
+                    var readTask2 = Task.Run(async () => await CopyToAsync(writer));
 
                     while (count++ < 10)
                     {
@@ -78,43 +78,34 @@ namespace Flettu.Test
             using (var memoryStream = new MemoryStream())
             using (var reader = writer.OpenStreamReader())
             {
-                // int readSize = 0;
-                // while ((readSize = await reader.ReadAsync(buffer, 0, buffer.Length)) != 0)
-                // {
-                //     totalRead += readSize;
-                //     Console.WriteLine($"ReadAllAsync => Read size: {readSize}, total read size: {totalRead}, buffer length: {buffer.Length}");
-                // }
-
-                var copyTask = reader.CopyToAsync(memoryStream);
-                while (!copyTask.IsCompleted)
+                int readSize = 0;
+                while ((readSize = await reader.ReadAsync(buffer, 0, buffer.Length)) != 0)
                 {
-                    Console.WriteLine($"Copying external stream position: {memoryStream.Position}, length: {memoryStream.Length}");
-                    await Task.Delay(500);
+                    totalRead += readSize;
+                    Console.WriteLine($"ReadAllAsync => Read size: {readSize}, total read size: {totalRead}, buffer length: {buffer.Length}");
                 }
-
-                Console.WriteLine($"Copied size to external stream: {memoryStream.Length}");
             }
 
             Console.WriteLine($"ReadAllAsync => Ended");
         }
 
-        private static async Task ReadToCountAllAsync(ConcurrentPipeWriter writer, int bufferSize)
+        private static async Task CopyToAsync(ConcurrentPipeWriter writer)
         {
-            var buffer = new byte[bufferSize];
-            var totalRead = 0;
-
-            Console.WriteLine($"ReadToCountAllAsync => Started");
+            Console.WriteLine($"CopyToAsync => Started");
+            using (var memoryStream = new MemoryStream())
             using (var reader = writer.OpenStreamReader())
             {
-                int readSize = 0;
-                while ((readSize = await reader.ReadToCountAsync(buffer, 0, buffer.Length)) != 0)
+                var copyTask = reader.CopyToAsync(memoryStream);
+                while (!copyTask.IsCompleted)
                 {
-                    totalRead += readSize;
-                    Console.WriteLine($"ReadToCountAllAsync => Read size: {readSize}, total read size: {totalRead}, buffer length: {buffer.Length}");
+                    Console.WriteLine($"CopyToAsync => Copying external stream position: {memoryStream.Position}, length: {memoryStream.Length}");
+                    await Task.Delay(500);
                 }
+
+                Console.WriteLine($"CopyToAsync => Copied size to external stream: {memoryStream.Length}");
             }
 
-            Console.WriteLine($"ReadToCountAllAsync => Ended");
+            Console.WriteLine($"CopyToAsync => Ended");
         }
 
         private static async Task CheckAsyncLockReentranceAsync(AsyncLock asyncLock, int maxReentrances = 2)
