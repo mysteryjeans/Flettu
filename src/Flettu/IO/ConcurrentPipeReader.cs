@@ -45,15 +45,13 @@ namespace Flettu.IO
         /// <summary>
         /// Reads into the buffer from available bytes or stream end
         /// </summary>
-        public async Task<int> ReadAvailableAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
+        public  async Task<int> ReadAvailableAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
         {
             var readSize = await base.ReadAsync(buffer, offset, count, cancellationToken);
-            while (readSize == 0)
+            while (readSize == 0 && !IsEndOfStream)
             {
                 await _wait.WaitOneAsync(cancellationToken);
                 readSize = await base.ReadAsync(buffer, offset, count, cancellationToken);
-                if (readSize == 0 && IsEndOfStream)
-                    break;
             }
 
             return readSize;
@@ -64,19 +62,14 @@ namespace Flettu.IO
         /// </summary>
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
-            var readLength = await base.ReadAsync(buffer, offset, count, cancellationToken);
-            while (readLength < count)
+            var readSize = await base.ReadAsync(buffer, offset, count, cancellationToken);
+            while (readSize < count && !IsEndOfStream)
             {
                 await _wait.WaitOneAsync(cancellationToken);
-
-                var readSize = await base.ReadAsync(buffer, offset + readLength, count - readLength, cancellationToken);
-                if (readSize == 0 && IsEndOfStream)
-                    break;
-
-                readLength += readSize;
+                readSize += await base.ReadAsync(buffer, offset + readSize, count - readSize, cancellationToken);
             }
 
-            return readLength;
+            return readSize;
         }
 
         protected override void Dispose(bool disposing)
