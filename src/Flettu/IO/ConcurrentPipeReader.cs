@@ -15,7 +15,7 @@ namespace Flettu.IO
         private readonly AsyncAutoResetEvent _wait = new AsyncAutoResetEvent(false);
         private readonly ConcurrentPipeWriter _writer;
 
-        public bool IsEndOfStream => _writer.IsEndOfStream && _position == _writer.Length;
+        public bool IsEndOfStream => _writer.IsEndOfStream && _position == _writer.Position;
 
         /// <summary>
         /// Create a new reader from zero postion of the provided stream
