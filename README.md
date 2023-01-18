@@ -78,9 +78,8 @@ static void Main(string[] args)
         int count = 0;
         using (var writer = new ConcurrentPipeWriter(underlineStream))
         {
-            var readTask1 = Task.Run(async () => await ReadAllAsync(writer, 512));
-            var readTask2 = Task.Run(async () => await ReadToCountAllAsync(writer, 1024));
-            var readTask3 = Task.Run(async () => await CopyToAsync(writer));
+            var readTask1 = Task.Run(async () => await ReadAllAsync(writer, 512)); 
+            var readTask2 = Task.Run(async () => await CopyToAsync(writer));
 
             while (count++ < 10)
             {
@@ -116,25 +115,6 @@ private static async Task ReadAllAsync(ConcurrentPipeWriter writer, int bufferSi
     }
 
     Console.WriteLine($"ReadAllAsync => Ended");
-}
-
-private static async Task ReadToCountAllAsync(ConcurrentPipeWriter writer, int bufferSize)
-{
-    var buffer = new byte[bufferSize];
-    var totalRead = 0;
-
-    Console.WriteLine($"ReadToCountAllAsync => Started");
-    using (var reader = writer.OpenStreamReader())
-    {
-        int readSize = 0;
-        while ((readSize = await reader.ReadToCountAsync(buffer, 0, buffer.Length)) != 0)
-        {
-            totalRead += readSize;
-            Console.WriteLine($"ReadToCountAllAsync => Read size: {readSize}, total read size: {totalRead}, buffer length: {buffer.Length}");
-        }
-    }
-
-    Console.WriteLine($"ReadToCountAllAsync => Ended");
 }
 
 private static async Task CopyToAsync(ConcurrentPipeWriter writer)
