@@ -17,84 +17,53 @@ namespace Flettu.Lock
             return _taskId.Value;
         }
 
-        private bool disposed = false;
-        private int reentrances = 0;
-        private SemaphoreSlim retry = new SemaphoreSlim(1, 1);
+        private int _reentrances = 0;
+        private readonly SemaphoreSlim _retry = new SemaphoreSlim(1, 1);
 
-        public long? TaskId { get; private set; }
+        public long TaskId { get; private set; } 
 
-        internal class LockObject : IDisposable
+        public Task AcquireAsync(CancellationToken cancellationToken = default)
         {
-            private long taskId = 0;
-            private bool disposed = false;
-            private AsyncLock asyncLock;
+            var currentTaskId = GetTaskId();
+            if (TaskId == currentTaskId)
+                _reentrances++;
 
-            public LockObject(AsyncLock asyncLock, long taskId)
+            return TakeLock();
+            async Task TakeLock()
             {
-                this.taskId = taskId;
-                this.asyncLock = asyncLock;
-            }
-
-            public async Task<IDisposable> AcquireAsync(CancellationToken cancellationToken)
-            {
-                if (!HasAcquired())
-                {
-                    await this.asyncLock.retry.WaitAsync(cancellationToken);
-
-                    this.asyncLock.TaskId = this.taskId;
-                    this.asyncLock.reentrances++;
-                }
-
-                return this;
-            }
-
-            private bool HasAcquired()
-            {
-                if (this.asyncLock.TaskId != null && this.asyncLock.TaskId == this.taskId)
-                {
-                    this.asyncLock.reentrances++;
-                    return true;
-                }
-
-                return false;
-            }
-
-            public void Dispose()
-            {
-                if (!this.disposed)
-                {
-                    this.disposed = true;
-
-                    this.asyncLock.reentrances--;
-                    if (this.asyncLock.reentrances == 0)
-                    {
-                        this.asyncLock.TaskId = null;
-                        this.asyncLock.retry.Release();
-                    }
-                }
+                await _retry.WaitAsync(cancellationToken);
+                TaskId = currentTaskId;
+                _reentrances++;
             }
         }
 
-        public Task<IDisposable> AcquireAsync(CancellationToken cancellationToken)
+        public void Release()
         {
-            var lockObject = new LockObject(this, this.GetTaskId());
-            return lockObject.AcquireAsync(cancellationToken);
+            if (TaskId != GetTaskId())
+                throw new InvalidOperationException($"Lock may only be release from the acquired task, otherwise use {nameof(SemaphoreSlim)}!");
+
+            _reentrances--;
+            if (_reentrances == 0)
+            {
+                TaskId = 0;
+                _retry.Release();
+            }
         }
 
-        public Task<IDisposable> AcquireAsync() => this.AcquireAsync(CancellationToken.None);
-
+        private bool _disposed = false;
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!_disposed)
             {
-                this.disposed = true;
                 if (disposing)
                 {
-                    this.retry.Dispose();
+                    _retry.Dispose();
                 }
+
+                _disposed = true;
             }
         }
 
-        public void Dispose() => this.Dispose(true);
+        public void Dispose() => Dispose(true);
     }
 }
