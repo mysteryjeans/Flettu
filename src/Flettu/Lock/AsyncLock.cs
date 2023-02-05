@@ -18,7 +18,7 @@ namespace Flettu.Lock
         }
 
         private int _reentrances = 0;
-        private readonly SemaphoreSlim _retry = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
         public long TaskId { get; private set; } 
 
@@ -31,7 +31,7 @@ namespace Flettu.Lock
             return TakeLock();
             async Task TakeLock()
             {
-                await _retry.WaitAsync(cancellationToken);
+                await _lock.WaitAsync(cancellationToken);
                 TaskId = currentTaskId;
                 _reentrances++;
             }
@@ -46,7 +46,7 @@ namespace Flettu.Lock
             if (_reentrances == 0)
             {
                 TaskId = 0;
-                _retry.Release();
+                _lock.Release();
             }
         }
 
@@ -57,7 +57,7 @@ namespace Flettu.Lock
             {
                 if (disposing)
                 {
-                    _retry.Dispose();
+                    _lock.Dispose();
                 }
 
                 _disposed = true;

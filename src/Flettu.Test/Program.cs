@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,17 +11,34 @@ namespace Flettu.Test
 {
     class Program
     {
+        static AsyncValueLock<string> asyncLock = new AsyncValueLock<string>();
         static async Task Main(string[] args)
         {
-            var valueLock = new AsyncValueLock<string>();
-
-            var token1 = await valueLock.AcquireAsync("faraz");
-            var token2 = await valueLock.AcquireAsync("faraz");
-
-            valueLock.Release("faraz", token1);
-            valueLock.Release("faraz", token2);
+            await Task.WhenAll(
+                ExecuteTask("faraz", 1),
+                ExecuteTask("faraz", 2),
+                ExecuteTask("masood", 3),
+                ExecuteTask("faraz", 4),
+                ExecuteTask("faraz", 5),
+                ExecuteTask("faraz", 6)
+                ) ;
 
             Console.ReadKey();
+        }
+
+        private static async Task ExecuteTask(string value, int taskId)
+        {
+            await asyncLock.AcquireAsync(value);
+            try
+            {
+                Console.WriteLine($"Entered: Task# {taskId}, value: {value}");
+                await Task.Delay(1000);
+            }
+            finally
+            {
+                Console.WriteLine($"Exit: Task# {taskId}, value: {value}");
+                asyncLock.Release(value);
+            }
         }
 
         private static async Task ReadAllAsync(ConcurrentPipeWriter writer, int bufferSize)
