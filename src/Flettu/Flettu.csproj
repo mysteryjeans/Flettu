@@ -3,12 +3,12 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageId>Flettu</PackageId>
     <Title>Flettu</Title>
-    <Version>1.4.0</Version>
+    <Version>1.5.0</Version>
     <Authors>Faraz M. Khan</Authors>
     <Owners>mysteryjeans</Owners>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mysteryjeans/Flettu</RepositoryUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/mysteryjeans/Flettu/master/LICENSE</PackageLicenseUrl>
+    <PackageLicense>https://raw.githubusercontent.com/mysteryjeans/Flettu/master/LICENSE</PackageLicense>
     <Description>A library of core helpers, concurrent list &amp; hashset, extensions, Async/Await locks on object, strings, integers</Description>
     <Copyright>Copyright 2023 Faraz M. Khan</Copyright>
     <IncludeSymbols>true</IncludeSymbols>

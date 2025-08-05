@@ -57,10 +57,62 @@ namespace Flettu.Lock
                 _wait.Release();
             }
 
-            await valueLock.Lock.WaitAsync(cancellationToken);
+            try
+            {
+                await valueLock.Lock.WaitAsync(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                Release(value, false);
+                throw;
+            }
         }
 
-        public void Release(T value)
+        /// <summary>
+        /// Try Acquiring an exclusive lock on the specified value, must be called in 'using' statement
+        /// </summary>
+        /// <example>
+        /// if(await asyncLock.TryAcquireAsync(value)))
+        ///     try
+        ///     {
+        ///         ....
+        ///     }
+        ///     finally
+        ///     {
+        ///         asyncLock.Release(value));
+        ///     }
+        /// </example>
+        /// <param name="value">The value on which to acquire the lock.</param>
+        /// <returns>Token for lock object for T value</returns>
+        public async Task<bool> TryAcquireAsync(T value, CancellationToken cancellationToken = default)
+        {
+            ValueLock valueLock;
+            await _wait.WaitAsync(cancellationToken);
+            try
+            {
+                if (!_valueWaits.TryGetValue(value, out valueLock))
+                {
+                    valueLock = new ValueLock { Lock = new SemaphoreSlim(1), Count = 0 };
+                    _valueWaits.Add(value, valueLock);
+                }
+
+                if (await valueLock.Lock.WaitAsync(0))
+                {
+                    valueLock.Count++;
+                    return true;
+                }
+            }
+            finally
+            {
+                _wait.Release();
+            }
+
+            return false;
+        }
+
+        public void Release(T value) => Release(value, true);
+
+        private void Release(T value, bool releaseLock = true)
         {
             ValueLock valueLock;
             _wait.Wait();
@@ -80,7 +132,9 @@ namespace Flettu.Lock
                 _wait.Release();
             }
 
-            valueLock.Lock.Release();
+            if (releaseLock)
+                valueLock.Lock.Release();
+
             if (valueLock.Count == 0)
                 valueLock.Lock.Dispose();
         }
