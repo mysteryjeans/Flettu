@@ -3,7 +3,7 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageId>Flettu</PackageId>
     <Title>Flettu</Title>
-    <Version>1.5.0</Version>
+    <Version>1.5.2</Version>
     <Authors>Faraz M. Khan</Authors>
     <Owners>mysteryjeans</Owners>
     <RepositoryType>git</RepositoryType>
